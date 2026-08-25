@@ -34,6 +34,7 @@ js/
   cursor.js         custom cursor + shared pointer position
   wireframe.js      background wireframe water plane (perspective grid + waves)
   interactions.js   card tilt + magnetic buttons
+  form.js           contact form validation, composes a mailto: link
   particles.js      flow-field constellation canvas
   main.js           entry point
 sections/           one HTML partial per slide (content only)

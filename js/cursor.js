@@ -24,6 +24,23 @@ export function initCursor() {
     requestAnimationFrame(loop);
   })();
 
+  // touch devices have no pointer — drift a virtual one so the constellation,
+  // the spotlight and the orb parallax stay alive there too
+  if (matchMedia("(hover:none)").matches) {
+    let a = 0;
+    (function drift() {
+      a += 0.0016;
+      pointer.x = innerWidth  * (0.5  + 0.34 * Math.sin(a * 1.3));
+      pointer.y = innerHeight * (0.45 + 0.30 * Math.sin(a * 0.9 + 1.2));
+      spot.style.setProperty("--mx", pointer.x + "px");
+      spot.style.setProperty("--my", pointer.y + "px");
+      bg.style.transform =
+        "translate3d(" + ((innerWidth / 2 - pointer.x) * .02) + "px," +
+                         ((innerHeight / 2 - pointer.y) * .02) + "px,0)";
+      requestAnimationFrame(drift);
+    })();
+  }
+
   // grow the ring over interactive things (delegated, so it covers loaded sections)
   const hot = 'a,button,.chip,.card,.cert';
   document.addEventListener('mouseover', e => {

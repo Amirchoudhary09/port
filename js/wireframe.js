@@ -9,7 +9,7 @@ export function initWireframe() {
   if (!cv) return;
   const cx = cv.getContext('2d', { alpha: true });
 
-  const COLS = 46, ROWS = 30;
+  let COLS = 46, ROWS = 30;
   let W, H, DPR, t = 0, paused = false, resizeTimer;
 
   function size() {
@@ -18,6 +18,9 @@ export function initWireframe() {
     cv.width = W * DPR; cv.height = H * DPR;
     cv.style.width = W + 'px'; cv.style.height = H + 'px';
     cx.setTransform(DPR, 0, 0, DPR, 0, 0);
+    // thin the mesh out on phones so it stays a smooth 60fps there too
+    COLS = W < 560 ? 26 : W < 1000 ? 34 : 46;
+    ROWS = W < 560 ? 18 : W < 1000 ? 24 : 30;
   }
   size();
   addEventListener('resize', () => { clearTimeout(resizeTimer); resizeTimer = setTimeout(size, 150); });
@@ -80,7 +83,7 @@ export function initWireframe() {
     }
 
     // specular glints on the crests
-    for (let j = ROWS - 12; j <= ROWS; j += 3) {
+    for (let j = Math.max(2, ROWS - 12); j <= ROWS; j += 3) {
       for (let i = 0; i <= COLS; i += 3) {
         const [x, y, d] = project(i, j);
         const s = Math.sin(i * 1.6 + t * 1.15) * Math.cos(j * 0.9 - t);

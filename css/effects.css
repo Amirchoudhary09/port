@@ -45,3 +45,9 @@ body.hot #ring{width:66px;height:66px;margin:-33px 0 0 -33px;background:rgba(255
   animation:fadeMesh 2.6s var(--ease) .5s forwards}
 @keyframes fadeMesh{to{opacity:.62}}
 @media (prefers-reduced-motion:reduce){#mesh{display:none}}
+
+/* touch: the spotlight has no cursor to follow, so give it its own drift */
+@media(hover:none){
+  #spot{animation:spotFloat 22s var(--ease) infinite alternate}
+  @keyframes spotFloat{from{transform:translate(-16vw,-10vh)}to{transform:translate(16vw,14vh)}}
+}

@@ -105,13 +105,25 @@
   100%  {opacity:0}
 }
 
-/* keep the hero copy clear of the scene */
+/* ---- desktop: floats in the hero top-right ---- */
 @media(min-width:1180px){
   .hero .lead,.hero .role{max-width:48ch}
 }
+
+/* ---- tablet & phone: same scene, same 13s story, moved above the headline ---- */
 @media(max-width:1179px){
-  .scene{display:none}
+  .scene{position:static;align-self:center;width:100%;max-width:460px;
+    height:min(30svh,230px);margin:0 auto 16px}
+  .scene__svg{width:auto;height:100%;max-width:100%}
 }
+@media(max-width:520px){
+  .scene{height:min(26svh,190px);margin-bottom:12px}
+  .scene__welcome span{font-size:10px;letter-spacing:.22em}
+  .scene__welcome b{font-size:1.55rem}
+  .bolt{stroke-width:2.4}
+  .ring{stroke-width:2}
+}
+
 @media (prefers-reduced-motion:reduce){
   .scene{display:none}
 }

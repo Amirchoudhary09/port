@@ -6,6 +6,7 @@ import { initTyping } from './typing.js';
 import { initReveal, initCounters } from './reveal.js';
 import { initCursor } from './cursor.js';
 import { initTilt, initMagnetic } from './interactions.js';
+import { initForm } from './form.js';
 import { initParticles } from './particles.js';
 import { initWireframe } from './wireframe.js';
 
@@ -32,6 +33,7 @@ import { initWireframe } from './wireframe.js';
   initCounters();
   initTilt();
   initMagnetic();
+  initForm();
 
   // land on the right slide when the page is opened with a hash
   if (location.hash) {
