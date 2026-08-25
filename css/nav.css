@@ -1,0 +1,38 @@
+/* ===== top icon nav (pill) ===== */
+.nav{position:fixed;top:16px;left:50%;transform:translateX(-50%);z-index:95;
+  display:flex;align-items:center;gap:2px;padding:6px;
+  border:1px solid var(--line);border-radius:999px;background:rgba(8,10,18,.62);
+  backdrop-filter:blur(14px);animation:navIn 1s var(--ease) .4s both;
+  max-width:calc(100vw - 20px);overflow-x:auto;scrollbar-width:none}
+.nav::-webkit-scrollbar{display:none}
+@keyframes navIn{from{opacity:0;transform:translate(-50%,-28px)}}
+
+.nav a{position:relative;flex:0 0 auto;display:inline-flex;align-items:center;gap:8px;
+  height:38px;padding:0 14px;border-radius:999px;
+  color:var(--mut);text-decoration:none;font-size:13px;
+  transition:color .3s,background .3s}
+.nav a svg{width:18px;height:18px;stroke:currentColor;fill:none;
+  stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;flex:0 0 auto}
+.nav a span{white-space:nowrap}
+.nav a:hover{color:#fff;background:rgba(255,255,255,.06)}
+.nav a.on{color:#fff}
+.nav a.on::before{content:'';position:absolute;inset:0;border-radius:999px;z-index:-1;
+  background:linear-gradient(135deg,var(--a),var(--b));opacity:.26;animation:pop .45s var(--ease)}
+@keyframes pop{from{transform:scale(.7);opacity:0}}
+
+.nav .count{flex:0 0 auto;font-family:var(--mono);font-size:10.5px;color:var(--mut);
+  padding:0 12px 0 14px;margin-left:4px;border-left:1px solid var(--line)}
+
+/* tablet: icons keep their labels only for the active slide */
+@media(max-width:1100px){
+  .nav a{padding:0 11px}
+  .nav a span{display:none}
+  .nav a.on span{display:inline}
+  .nav .count{display:none}
+}
+@media(max-width:560px){
+  .nav{top:10px;gap:0}
+  .nav a{height:34px;padding:0 9px}
+  .nav a span{display:none}
+  .nav a.on span{display:none}
+}

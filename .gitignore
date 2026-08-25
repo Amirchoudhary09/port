@@ -1,0 +1,7 @@
+# local backup of the pre-refactor single-file version
+index.original.html
+
+node_modules/
+.DS_Store
+Thumbs.db
+*.log

@@ -1,0 +1,45 @@
+/* ===== base: reset, tokens, typography ===== */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#05060a; --bg2:#0a0c14; --panel:rgba(255,255,255,.04);
+  --line:rgba(255,255,255,.09); --tx:#eef1f8; --mut:#8b93a7;
+  --a:#7c5cff; --b:#22d3ee; --c:#ff6b9d;
+  --mono:'JetBrains Mono',ui-monospace,monospace;
+  --ease:cubic-bezier(.22,1,.36,1);
+}
+html,body{min-height:100%}
+body{background:var(--bg);color:var(--tx);font-family:'Sora',system-ui,sans-serif;
+  line-height:1.65;-webkit-font-smoothing:antialiased}
+
+.wrap{position:relative;z-index:2;max-width:1120px;margin:0 auto;padding:0 24px}
+
+.grad{background:linear-gradient(105deg,var(--a),var(--b) 45%,var(--c));
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+  background-size:220% 100%;animation:shift 7s linear infinite}
+@keyframes shift{to{background-position:220% 0}}
+
+.btn{position:relative;isolation:isolate;overflow:hidden;display:inline-flex;align-items:center;gap:9px;
+  padding:13px 26px;border-radius:999px;text-decoration:none;font-size:14px;font-weight:600;
+  border:1px solid var(--line);color:var(--tx);background:var(--panel);
+  transition:transform .25s var(--ease),border-color .3s,box-shadow .3s,color .3s}
+.btn:hover{transform:translateY(-3px);border-color:transparent;box-shadow:0 14px 40px rgba(124,92,255,.32);color:#05060a}
+.btn::before{content:'';position:absolute;inset:0;z-index:-1;opacity:0;
+  background:linear-gradient(135deg,var(--a),var(--b));transition:opacity .3s}
+.btn:hover::before{opacity:1}
+.btn.solid{background:linear-gradient(135deg,var(--a),var(--b));border-color:transparent;color:#05060a}
+
+#prog{position:fixed;top:0;left:0;height:2px;width:0;z-index:99;
+  background:linear-gradient(90deg,var(--a),var(--b),var(--c));box-shadow:0 0 18px var(--a)}
+
+.head{display:flex;align-items:baseline;gap:16px;margin-bottom:40px}
+.head em{font-family:var(--mono);font-style:normal;font-size:13px;color:var(--a)}
+.head h2{font-size:clamp(1.7rem,4.4vw,2.8rem);font-weight:800;letter-spacing:-.03em}
+.head .rule{flex:1;height:1px;background:linear-gradient(90deg,var(--line),transparent)}
+
+.rv{opacity:0;transform:translateY(40px);transition:opacity .9s var(--ease),transform .9s var(--ease)}
+.rv.in{opacity:1;transform:none}
+
+@media (prefers-reduced-motion:reduce){
+  *{animation-duration:.01ms !important;transition-duration:.01ms !important}
+  .rv{opacity:1;transform:none}
+}
