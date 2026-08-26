@@ -1,98 +1,126 @@
 /**
- * Background wireframe water plane.
- * A perspective grid displaced by two crossing sine waves — the same trick that
- * drives a real ripple / flow-map water shader, drawn here on a 2D canvas so it
- * costs nothing. It sits behind everything and quietly signals "graphics".
+ * 3D floating geometry scene — Three.js WebGL.
+ * Replaces the 2D wireframe water plane with floating 3D shapes that drift,
+ * rotate, and follow the cursor through camera parallax.  Sits behind
+ * everything and quietly signals "graphics".
  */
+import * as THREE from 'three';
+import { pointer } from './cursor.js';
+
 export function initWireframe() {
   const cv = document.getElementById('mesh');
   if (!cv) return;
-  const cx = cv.getContext('2d', { alpha: true });
+  if (matchMedia('(prefers-reduced-motion:reduce)').matches) return;
 
-  let COLS = 46, ROWS = 30;
-  let W, H, DPR, t = 0, paused = false, resizeTimer;
+  /* ---- renderer ---- */
+  const renderer = new THREE.WebGLRenderer({ canvas: cv, alpha: true, antialias: true });
+  renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+  renderer.setSize(innerWidth, innerHeight);
 
-  function size() {
-    DPR = Math.min(devicePixelRatio || 1, 2);
-    W = innerWidth; H = innerHeight;
-    cv.width = W * DPR; cv.height = H * DPR;
-    cv.style.width = W + 'px'; cv.style.height = H + 'px';
-    cx.setTransform(DPR, 0, 0, DPR, 0, 0);
-    // thin the mesh out on phones so it stays a smooth 60fps there too
-    COLS = W < 560 ? 26 : W < 1000 ? 34 : 46;
-    ROWS = W < 560 ? 18 : W < 1000 ? 24 : 30;
+  /* ---- scene + camera ---- */
+  const scene  = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(55, innerWidth / innerHeight, 0.1, 500);
+  camera.position.z = 32;
+
+  /* ---- palette (matches CSS vars) ---- */
+  const PAL = [0x7c5cff, 0x22d3ee, 0xff6b9d, 0x3b82f6];
+
+  /* ---- helpers ---- */
+  const meshes = [];
+
+  function add(geo, i, opts = {}) {
+    const mat = new THREE.MeshBasicMaterial({
+      color: new THREE.Color(PAL[i % PAL.length]),
+      wireframe: true,
+      transparent: true,
+      opacity: opts.opacity ?? (0.14 + Math.random() * 0.14),
+    });
+    const m = new THREE.Mesh(geo, mat);
+    const s = opts.scale ?? (0.9 + Math.random() * 2.2);
+    m.scale.setScalar(s);
+    m.position.set(
+      opts.x ?? (Math.random() - 0.5) * 52,
+      opts.y ?? (Math.random() - 0.5) * 28,
+      opts.z ?? (Math.random() - 0.5) * 20 - 8,
+    );
+    m.userData = {
+      rx: (Math.random() - 0.5) * 0.007,
+      ry: (Math.random() - 0.5) * 0.007,
+      rz: (Math.random() - 0.5) * 0.003,
+      fSpd: 0.25 + Math.random() * 0.65,
+      fAmp: 0.4 + Math.random() * 1.8,
+      ph:   Math.random() * Math.PI * 2,
+      baseY: m.position.y,
+    };
+    scene.add(m);
+    meshes.push(m);
   }
-  size();
-  addEventListener('resize', () => { clearTimeout(resizeTimer); resizeTimer = setTimeout(size, 150); });
+
+  /* ---- primary shapes (count adapts to screen) ---- */
+  const mobile = innerWidth < 700;
+  const N = mobile ? 5 : 10;
+
+  const geos = [
+    () => new THREE.IcosahedronGeometry(1, 0),
+    () => new THREE.OctahedronGeometry(1, 0),
+    () => new THREE.TetrahedronGeometry(1, 0),
+    () => new THREE.TorusGeometry(0.7, 0.25, 8, 16),
+    () => new THREE.TorusKnotGeometry(0.55, 0.2, 48, 8),
+    () => new THREE.DodecahedronGeometry(1, 0),
+    () => new THREE.IcosahedronGeometry(0.8, 1),
+    () => new THREE.BoxGeometry(1, 1, 1),
+    () => new THREE.ConeGeometry(0.7, 1.4, 6),
+    () => new THREE.CylinderGeometry(0.5, 0.5, 1.2, 8),
+  ];
+  for (let i = 0; i < N; i++) add(geos[i % geos.length](), i);
+
+  /* ---- large, very faint background accents for extra depth ---- */
+  if (!mobile) {
+    for (let i = 0; i < 3; i++) {
+      add(
+        new THREE.IcosahedronGeometry(3.5 + Math.random() * 2, 1), i,
+        { opacity: 0.03 + Math.random() * 0.025, z: -22 - Math.random() * 14, scale: 3 + Math.random() * 2 },
+      );
+    }
+  }
+
+  /* ---- animation loop ---- */
+  let paused = false, mx = 0, my = 0;
   document.addEventListener('visibilitychange', () => { paused = document.hidden; });
 
-  const horizon = () => H * 0.52;
-
-  /** project grid cell (i, j) to screen space, displaced by the wave field */
-  function project(i, j) {
-    const d = j / ROWS;                             // 0 at the horizon, 1 up close
-    const depth = Math.pow(d, 2.15);
-    const spread = W * (0.22 + 2.35 * Math.pow(d, 1.55));
-    const x = W / 2 + (i / COLS - 0.5) * 2 * spread;
-
-    // two crossing waves + a slow swell, scaled down with distance
-    const u = i / COLS * 7.5, v = j / ROWS * 5.5;
-    const wave =
-      Math.sin(u * 1.6 + t * 1.15) * 1.0 +
-      Math.sin(v * 2.1 - t * 0.85) * 0.7 +
-      Math.sin((u + v) * 1.1 + t * 0.5) * 0.55;
-
-    const y = horizon() + (H * 0.86) * depth - wave * (7 + 26 * depth);
-    return [x, y, d];
-  }
-
-  function strokeFor(d) {
-    // cyan far away, violet up close — fades out toward the horizon
-    const a = 0.055 + 0.16 * d;
-    const r = Math.round(60 + 70 * d), g = Math.round(190 - 90 * d), b = 255;
-    return `rgba(${r},${g},${b},${a.toFixed(3)})`;
-  }
-
-  (function draw() {
-    requestAnimationFrame(draw);
+  (function frame() {
+    requestAnimationFrame(frame);
     if (paused) return;
-    t += 0.0075;
-    cx.clearRect(0, 0, W, H);
-    cx.lineWidth = 1;
 
-    // lines running across the plane
-    for (let j = 1; j <= ROWS; j++) {
-      cx.beginPath();
-      for (let i = 0; i <= COLS; i++) {
-        const [x, y] = project(i, j);
-        i ? cx.lineTo(x, y) : cx.moveTo(x, y);
-      }
-      cx.strokeStyle = strokeFor(j / ROWS);
-      cx.stroke();
+    const t = performance.now() * 0.001;
+
+    // smooth camera parallax following cursor
+    mx += ((pointer.x / innerWidth  - 0.5) * 2 - mx) * 0.025;
+    my += ((pointer.y / innerHeight - 0.5) * 2 - my) * 0.025;
+    camera.position.x =  mx * 3.5;
+    camera.position.y = -my * 2.5;
+    camera.lookAt(0, 0, -5);
+
+    for (const m of meshes) {
+      const d = m.userData;
+      m.rotation.x += d.rx;
+      m.rotation.y += d.ry;
+      m.rotation.z += d.rz;
+      m.position.y = d.baseY + Math.sin(t * d.fSpd + d.ph) * d.fAmp;
     }
 
-    // lines running into the distance
-    for (let i = 0; i <= COLS; i += 2) {
-      cx.beginPath();
-      for (let j = 1; j <= ROWS; j++) {
-        const [x, y] = project(i, j);
-        j === 1 ? cx.moveTo(x, y) : cx.lineTo(x, y);
-      }
-      cx.strokeStyle = strokeFor(0.5);
-      cx.stroke();
-    }
-
-    // specular glints on the crests
-    for (let j = Math.max(2, ROWS - 12); j <= ROWS; j += 3) {
-      for (let i = 0; i <= COLS; i += 3) {
-        const [x, y, d] = project(i, j);
-        const s = Math.sin(i * 1.6 + t * 1.15) * Math.cos(j * 0.9 - t);
-        if (s < 0.72) continue;
-        cx.beginPath();
-        cx.arc(x, y, 1.1 + d, 0, 6.2832);
-        cx.fillStyle = `rgba(190,240,255,${(0.10 + 0.22 * d).toFixed(3)})`;
-        cx.fill();
-      }
-    }
+    renderer.render(scene, camera);
   })();
+
+  /* ---- responsive ---- */
+  let rt;
+  addEventListener('resize', () => {
+    clearTimeout(rt);
+    rt = setTimeout(() => {
+      camera.aspect = innerWidth / innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(innerWidth, innerHeight);
+      renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+    }, 150);
+  });
 }

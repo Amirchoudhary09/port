@@ -28,18 +28,23 @@ html{scroll-behavior:auto}
   position:relative;width:100%;
   max-height:100svh;overflow-y:auto;
   padding:110px 0 96px;
-  /* driven by js: 0 = fully in view, 1 = fully covered by the next slide */
-  transform:translateY(calc(var(--p,0) * -8vh)) scale(calc(1 - var(--p,0) * .09));
+  /* 3D: perspective + rotateX driven by --p (0→1 = how far covered) */
+  transform:
+    perspective(1200px)
+    translateY(calc(var(--p,0) * -8vh))
+    scale(calc(1 - var(--p,0) * .09))
+    rotateX(calc(var(--p,0) * 2.5deg));
   opacity:calc(1 - var(--p,0) * .85);
   filter:blur(calc(var(--p,0) * 4px));
   transform-origin:50% 0;
+  transform-style:preserve-3d;
 }
 .slide__inner::-webkit-scrollbar{width:6px}
 .slide__inner::-webkit-scrollbar-thumb{background:var(--line);border-radius:99px}
 
-/* the incoming slide lifts in from below */
+/* the incoming slide lifts in from below with 3D rotation */
 .slide.entering .slide__inner{animation:slideUp .8s var(--ease) both}
-@keyframes slideUp{from{transform:translateY(9vh) scale(.97);opacity:0}}
+@keyframes slideUp{from{transform:perspective(1200px) translateY(9vh) scale(.97) rotateX(3deg);opacity:0}}
 
 @media (prefers-reduced-motion:reduce){
   html{scroll-snap-type:none !important}

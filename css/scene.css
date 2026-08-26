@@ -127,3 +127,41 @@
 @media (prefers-reduced-motion:reduce){
   .scene{display:none}
 }
+
+/* =====================================================================
+   3D rotating code cube — floats alongside the hero scene
+   ===================================================================== */
+.code-cube-wrap{
+  position:absolute;bottom:22%;right:5%;z-index:3;
+  width:90px;height:90px;perspective:500px;
+  pointer-events:none;
+  animation:fade 1.2s var(--ease) 1.6s both}
+.code-cube{
+  width:100%;height:100%;position:relative;
+  transform-style:preserve-3d;
+  animation:cubeRotate 18s linear infinite}
+.cube-face{
+  position:absolute;width:90px;height:90px;
+  display:grid;place-content:center;
+  font-family:var(--mono);font-size:11.5px;color:var(--b);
+  border:1px solid rgba(34,211,238,.16);
+  background:rgba(5,6,10,.62);
+  backdrop-filter:blur(4px);
+  backface-visibility:visible;
+  transition:border-color .4s}
+.cube-face code{color:inherit;font-size:inherit}
+.front  {transform:translateZ(45px)}
+.back   {transform:rotateY(180deg) translateZ(45px)}
+.cube-right  {transform:rotateY(90deg)  translateZ(45px)}
+.cube-left   {transform:rotateY(-90deg) translateZ(45px)}
+.cube-top    {transform:rotateX(90deg)  translateZ(45px)}
+.cube-bottom {transform:rotateX(-90deg) translateZ(45px)}
+@keyframes cubeRotate{
+  0%  {transform:rotateX(0deg)   rotateY(0deg)}
+  100%{transform:rotateX(360deg) rotateY(720deg)}}
+
+/* glow pulse on cube faces */
+.code-cube:hover .cube-face{border-color:rgba(34,211,238,.4)}
+
+@media(max-width:1179px){.code-cube-wrap{display:none}}
+@media(prefers-reduced-motion:reduce){.code-cube-wrap{display:none}}

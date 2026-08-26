@@ -7,15 +7,13 @@
     <p>Finishing a B.Tech in CS (AI &amp; ML) at G.L. Bajaj, and solving DSA most days.</p>
   </div>
 
-  <figure class="snippet rv">
-    <figcaption><span class="dots"><i></i><i></i><i></i></span> water.hlsl</figcaption>
-    <pre><code><span class="c">// two RTs packed into one — half the bandwidth</span>
-<span class="k">float2</span> uv   = i.screenUV + <span class="f">Ripple</span>(i.wpos, time);
-<span class="k">float3</span> refl = ReflectionRT.<span class="f">Sample</span>(s, uv).rgb;
-<span class="k">float</span>  f    = <span class="f">Fresnel</span>(i.N, viewDir, <span class="n">0.02</span>);
-
-<span class="k">return</span> <span class="f">float4</span>(<span class="f">lerp</span>(waterTint, refl, f), <span class="n">1</span>);</code></pre>
-  </figure>
+  <div class="about__photo rv">
+    <div class="photo-frame tilt">
+      <div class="glow"></div>
+      <img src="img/profile.jpg" alt="Amir Choudhary — Software Development Engineer" width="420" height="420" loading="lazy">
+      <div class="photo-border"></div>
+    </div>
+  </div>
 </div>
 
 <div class="stats rv">
@@ -24,6 +22,16 @@
   <div class="stat"><b data-to="200" data-suf="+">0</b><span>AshGuard users</span></div>
   <div class="stat"><b data-to="3" data-pre="Top ">0</b><span>Adobe Emerge, IIT Delhi</span></div>
 </div>
+
+<figure class="snippet rv">
+  <figcaption><span class="dots"><i></i><i></i><i></i></span> water.hlsl</figcaption>
+  <pre><code><span class="c">// two RTs packed into one — half the bandwidth</span>
+<span class="k">float2</span> uv   = i.screenUV + <span class="f">Ripple</span>(i.wpos, time);
+<span class="k">float3</span> refl = ReflectionRT.<span class="f">Sample</span>(s, uv).rgb;
+<span class="k">float</span>  f    = <span class="f">Fresnel</span>(i.N, viewDir, <span class="n">0.02</span>);
+
+<span class="k">return</span> <span class="f">float4</span>(<span class="f">lerp</span>(waterTint, refl, f), <span class="n">1</span>);</code></pre>
+</figure>
 
 <div class="marq rv">
   <div>

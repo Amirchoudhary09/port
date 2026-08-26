@@ -2,10 +2,10 @@
 export const pointer = { x: innerWidth / 2, y: innerHeight / 2 };
 
 export function initCursor() {
-  const dot = document.getElementById('dot');
+  const dot  = document.getElementById('dot');
   const ring = document.getElementById('ring');
   const spot = document.getElementById('spot');
-  const bg = document.querySelector('.bg');
+  const bg   = document.querySelector('.bg');
   let rx = pointer.x, ry = pointer.y;
 
   addEventListener('mousemove', e => {
@@ -18,9 +18,17 @@ export function initCursor() {
   });
 
   (function loop() {
-    rx += (pointer.x - rx) * .16;
-    ry += (pointer.y - ry) * .16;
-    ring.style.transform = `translate(${rx}px,${ry}px)`;
+    const dx = pointer.x - rx;
+    const dy = pointer.y - ry;
+    rx += dx * .16;
+    ry += dy * .16;
+
+    // 3D directional tilt — ring banks into the direction of travel
+    const tiltX = Math.max(-35, Math.min(35, -dy * 0.7));
+    const tiltY = Math.max(-35, Math.min(35,  dx * 0.7));
+    ring.style.transform =
+      `translate(${rx}px,${ry}px) perspective(200px) rotateX(${tiltX}deg) rotateY(${tiltY}deg)`;
+
     requestAnimationFrame(loop);
   })();
 
