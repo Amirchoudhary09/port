@@ -55,17 +55,15 @@ export function createScroller(slides, onIndex) {
       return;
     }
 
-    // longer trips get a little more time, but never a slow crawl
-    const dur = Math.min(1000, 380 + Math.abs(dist) / innerHeight * 420);
-    const t0 = performance.now();
     animating = true;
-
-    (function step(t) {
-      const p = Math.min((t - t0) / dur, 1);
-      scrollTo(0, from + dist * ease(p));
-      if (p < 1) raf = requestAnimationFrame(step);
-      else { animating = false; release(); }
-    })(t0);
+    window.scrollTo({ top: to, behavior: 'smooth' });
+    
+    // We don't know exactly when smooth scroll ends natively, so we guess based on dist
+    const dur = Math.min(1000, 380 + Math.abs(dist) / innerHeight * 420);
+    setTimeout(() => {
+      animating = false;
+      release();
+    }, dur);
   }
 
   /** hold the wheel off briefly so trackpad inertia can't skip three slides */
