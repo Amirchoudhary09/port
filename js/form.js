@@ -1,8 +1,5 @@
 /**
- * Contact form.
- * There is no backend here, so the form composes a mailto: link and hands the
- * message to whatever mail client the visitor already uses — nothing is sent
- * anywhere by the page itself. Validation is ours so the styling stays consistent.
+ * Contact form using FormSubmit.co for direct email delivery.
  */
 export function initForm() {
   const form = document.getElementById('contact-form');
@@ -21,14 +18,16 @@ export function initForm() {
   form.addEventListener('input', e => {
     e.target.classList.remove('bad');
     err.textContent = '';
+    err.style.color = 'var(--c)';
   });
 
-  form.addEventListener('submit', e => {
+  form.addEventListener('submit', async e => {
     e.preventDefault();
     const data = {};
 
     for (const key of Object.keys(valid)) {
       const field = form.elements[key];
+      if (!field) continue;
       data[key] = field.value;
       const check = valid[key](field.value);
       if (check !== true) {
@@ -38,14 +37,47 @@ export function initForm() {
         return;
       }
     }
+    
+    // Also include subject if present
+    const subjectField = form.elements['subject'];
+    if (subjectField) data['subject'] = subjectField.value;
 
-    const subject = `Portfolio enquiry — ${data.name.trim()}`;
-    const body = `${data.message.trim()}\n\n—\n${data.name.trim()}\n${data.email.trim()}`;
-    location.href = `mailto:${TO}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-
-    const label = btn.textContent;
-    btn.textContent = 'Opening your mail app…';
+    const originalBtnHTML = btn.innerHTML;
+    btn.textContent = 'Sending...';
     btn.disabled = true;
-    setTimeout(() => { btn.textContent = label; btn.disabled = false; form.reset(); }, 2600);
+
+    try {
+      const response = await fetch(`https://formsubmit.co/ajax/${TO}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        },
+        body: JSON.stringify({
+          name: data.name.trim(),
+          email: data.email.trim(),
+          subject: data.subject ? data.subject.trim() : `Portfolio enquiry from ${data.name.trim()}`,
+          message: data.message.trim()
+        })
+      });
+
+      if (response.ok) {
+        form.reset();
+        err.style.color = 'var(--b)';
+        err.textContent = 'Message sent successfully!';
+      } else {
+        throw new Error('Server returned an error');
+      }
+    } catch (error) {
+      err.style.color = 'var(--c)';
+      err.textContent = 'Failed to send message. Please try again.';
+    } finally {
+      setTimeout(() => { 
+        btn.innerHTML = originalBtnHTML; 
+        btn.disabled = false; 
+        if (err.textContent === 'Message sent successfully!') err.textContent = '';
+      }, 3000);
+    }
   });
 }
+
