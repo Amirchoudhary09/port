@@ -12,7 +12,7 @@ html {
   display:flex;align-items:center;
   overflow:hidden;
   scroll-snap-align: start;
-  scroll-snap-stop: always;
+  scroll-snap-stop: normal;
   background: transparent;
   border-top:1px solid transparent;
   will-change:transform;
