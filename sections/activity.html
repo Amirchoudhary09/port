@@ -1,0 +1,49 @@
+<div class="head rv"><em>06</em><h2>GitHub Activity</h2><div class="rule"></div></div>
+<p class="rv" style="color:var(--mut);margin-top:-30px;margin-bottom:40px">My code statistics and contribution visualizer</p>
+<div class="grid" style="grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 24px;">
+  <div class="card rv tilt" style="padding:20px; display:flex; flex-direction:column; align-items:center; justify-content:center;">
+    <h3 style="margin-bottom: 15px; font-size: 1rem; color:var(--b)">General Stats</h3>
+    <img src="https://github-readme-stats.vercel.app/api?username=Amirchoudhary09&show_icons=true&theme=dracula&hide_border=true&bg_color=05060a00&title_color=22d3ee&text_color=8b93a7&icon_color=7c5cff" alt="Amir's GitHub Stats" style="width:100%; max-width:400px; border-radius: 8px;">
+  </div>
+  <div class="card rv tilt" style="padding:20px; display:flex; flex-direction:column; align-items:center; justify-content:center;">
+    <h3 style="margin-bottom: 15px; font-size: 1rem; color:var(--b)">Streak Count</h3>
+    <img src="https://github-readme-streak-stats.herokuapp.com/?user=Amirchoudhary09&theme=dracula&hide_border=true&background=05060a00&ring=7c5cff&fire=22d3ee&currStreakNum=eef1f8" alt="Amir's GitHub Streak" style="width:100%; max-width:400px; border-radius: 8px;">
+  </div>
+  <div class="card rv tilt" style="grid-column: 1 / -1; padding:24px; text-align:center; overflow-x: auto;">
+    <h3 style="margin-bottom: 15px; font-size: 1rem; color:var(--b)">Contributions Calendar</h3>
+    <div style="min-width: 600px; padding: 10px; background: rgba(0,0,0,0.2); border-radius: 8px; border: 1px solid var(--line);">
+      <img src="https://ghchart.rshah.org/7c5cff/Amirchoudhary09" alt="Amir's Activity Graph" style="width: 100%;">
+    </div>
+  </div>
+</div>
+
+<div class="head rv" style="margin-top: 80px;"><em>07</em><h2>Try Amir.AI</h2><div class="rule"></div></div>
+<p class="rv" style="color:var(--mut);margin-top:-30px;margin-bottom:40px">Query the AI assistant to explore my portfolio interactively</p>
+
+<div class="terminal rv tilt" id="ai-terminal">
+  <div class="term-header">
+     <div class="dots"><span class="dot red"></span><span class="dot yel"></span><span class="dot grn"></span></div>
+     <div class="term-title">amir-ai-shell v1.0.0 (bash)</div>
+     <div class="term-status">ONLINE</div>
+  </div>
+  <div class="term-body" id="ai-body">
+    <div class="term-line sys">[SYSTEM] Initialize Amir AI Engine... SUCCESS</div>
+    <div class="term-line sys">[SYSTEM] Load user profiles: 'Amir Choudhary'... SUCCESS</div>
+    <div class="term-line info"><br>Welcome to the interactive portfolio helper!</div>
+    <div class="term-line info">Type <span class="cmd">help</span> to list commands or use the quick buttons below.</div>
+    <div class="quick-btns" id="ai-btns">
+      <button class="qb" data-cmd="About Me">About Me</button>
+      <button class="qb" data-cmd="Tech Stack">Tech Stack</button>
+      <button class="qb" data-cmd="Projects">Projects</button>
+      <button class="qb" data-cmd="Hackathons">Hackathons</button>
+      <button class="qb" data-cmd="Resume">Resume</button>
+      <button class="qb" data-cmd="Secret Matrix Rain">Secret Matrix Rain</button>
+      <button class="qb" data-cmd="Clear Terminal">Clear Terminal</button>
+    </div>
+    <div class="term-history" id="ai-history"></div>
+    <div class="term-input-line">
+       <span class="prompt">visitor@amir-ai:~$</span>
+       <input type="text" id="ai-input" autocomplete="off" spellcheck="false" placeholder="Type a command (e.g., help, contact, experience)...">
+    </div>
+  </div>
+</div>

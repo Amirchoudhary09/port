@@ -278,3 +278,30 @@
 .card:hover .card__img img{transform:scale(1.05);filter:brightness(1)}
 .card__img::after{content:'';position:absolute;inset:0;
   background:linear-gradient(180deg,transparent 50%,rgba(5,6,10,.7));pointer-events:none}
+
+/* ===== Terminal / AI Shell ===== */
+.terminal { border: 1px solid var(--line); border-radius: 12px; background: rgba(8,10,18,.8); overflow: hidden; font-family: var(--mono); font-size: 13px; box-shadow: 0 10px 30px rgba(0,0,0,.5); backdrop-filter: blur(8px); }
+.term-header { display: flex; align-items: center; justify-content: space-between; padding: 10px 16px; background: rgba(255,255,255,.03); border-bottom: 1px solid var(--line); }
+.term-header .dots { display: flex; gap: 6px; }
+.term-header .dot { width: 10px; height: 10px; border-radius: 50%; }
+.term-header .red { background: #ff5f56; }
+.term-header .yel { background: #ffbd2e; }
+.term-header .grn { background: #27c93f; }
+.term-title { color: var(--mut); letter-spacing: 0.05em; font-size: 11px; }
+.term-status { color: #27c93f; font-size: 11px; font-weight: 600; letter-spacing: 0.1em; animation: pulse 2s infinite; }
+.term-body { padding: 16px; height: 350px; overflow-y: auto; display: flex; flex-direction: column; scroll-behavior: smooth; }
+.term-line { line-height: 1.6; margin-bottom: 6px; word-wrap: break-word; }
+.term-line.sys { color: var(--mut); }
+.term-line.info { color: #cfd6e6; }
+.term-line.ai-msg { color: var(--b); }
+.term-line.err { color: var(--c); }
+.cmd { color: var(--a); font-weight: 600; }
+.quick-btns { display: flex; flex-wrap: wrap; gap: 8px; margin: 12px 0; }
+.qb { font-family: var(--mono); font-size: 11px; background: rgba(255,255,255,.05); border: 1px solid var(--line); color: var(--tx); padding: 6px 12px; border-radius: 6px; cursor: pointer; transition: all .2s; }
+.qb:hover { background: rgba(34,211,238,.1); border-color: var(--b); color: var(--b); transform: translateY(-1px); }
+.term-input-line { display: flex; align-items: center; gap: 8px; margin-top: 10px; }
+.prompt { color: var(--a); font-weight: 600; white-space: nowrap; }
+#ai-input { flex: 1; background: transparent; border: none; color: #fff; font-family: var(--mono); font-size: 13px; outline: none; }
+#ai-input::placeholder { color: rgba(255,255,255,.2); }
+#ai-history { display: flex; flex-direction: column; }
+

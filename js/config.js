@@ -11,6 +11,7 @@ export const SECTIONS = [
   { id: 'skills',  file: 'skills.html',       label: 'Skills',       icon: 'code'    },
   { id: 'awards',  file: 'achievements.html', label: 'Achievements', icon: 'trophy'  },
   { id: 'certs',   file: 'certificates.html', label: 'Certificates', icon: 'badge'   },
+  { id: 'activity',file: 'activity.html',     label: 'Activity & AI', icon: 'terminal'},
   { id: 'contact', file: 'contact.html',      label: 'Contact',      icon: 'mail', cls: 'contact' }
 ];
 
@@ -23,6 +24,7 @@ export const ICONS = {
   code:  '<path d="m8.5 8-5 4 5 4"/><path d="m15.5 8 5 4-5 4"/><path d="m13.5 4-3 16"/>',
   trophy:'<path d="M7 4h10v5a5 5 0 0 1-10 0z"/><path d="M7 5.5H4V7a3.5 3.5 0 0 0 3.5 3.5"/><path d="M17 5.5h3V7a3.5 3.5 0 0 1-3.5 3.5"/><path d="M12 14v3.5"/><path d="M8.5 20.5h7"/><path d="M9.5 17.5h5l1 3h-7z"/>',
   badge: '<circle cx="12" cy="9.5" r="5.5"/><path d="M9 14.5 7.5 21.5l4.5-2.4 4.5 2.4L15 14.5"/>',
+  terminal:'<polyline points="4 17 10 11 4 5"></polyline><line x1="12" y1="19" x2="20" y2="19"></line>',
   mail:  '<rect x="3" y="5" width="18" height="14" rx="2.5"/><path d="m3.8 6.6 8.2 6 8.2-6"/>'
 };
 

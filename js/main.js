@@ -9,6 +9,7 @@ import { initTilt, initMagnetic } from './interactions.js';
 import { initForm } from './form.js';
 import { initParticles } from './particles.js';
 import { initWireframe } from './wireframe.js';
+import { initTerminal } from './terminal.js';
 
 (async function boot() {
   initCursor();
@@ -34,6 +35,7 @@ import { initWireframe } from './wireframe.js';
   initTilt();
   initMagnetic();
   initForm();
+  initTerminal();
 
   // land on the right slide when the page is opened with a hash
   if (location.hash) {
