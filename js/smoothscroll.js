@@ -1,32 +1,25 @@
-/**
- * Slide scroller.
- * The deck is a set of discrete slides, so scrolling is index-based: the
- * smallest wheel nudge immediately animates one slide forward or back, instead
- * of waiting for a whole gesture to accumulate. The page still scrolls for
- * real (scrollbar, anchors, touch momentum all work) — we just animate the
- * scroll position ourselves with an ease-in-out curve.
- */
 export function createScroller(slides, onIndex) {
   const reduce = matchMedia('(prefers-reduced-motion:reduce)').matches;
-  const ease = t => t < .5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+  const ease = t => t < .5 ? 4*t*t*t : 1 - Math.pow(-2*t + 2, 3) / 2;
 
-  let index = 0, animating = false, lock = false, raf = 0, lockTimer = 0, settleTimer = 0;
+  let index = 0;
+  let animating = false;
+  let raf = 0;
+  let lockTimer = 0;
+  let settleTimer = 0;
 
   const last = () => slides.length - 1;
   const clampIndex = i => Math.max(0, Math.min(last(), i));
 
-  /**
-   * Slides are position:sticky, so once one is pinned its offsetTop reports the
-   * pinned position, not its place in the flow — every already-passed slide would
-   * claim to live exactly where we already are, which is why jumping *back* did
-   * nothing. Derive the flow position from the deck instead.
-   */
-  let deckTop = 0, slideH = 0;
+  let deckTop = 0;
+  let slideH = 0;
+
   function measure() {
     const deck = slides[0].parentElement;
     deckTop = deck.getBoundingClientRect().top + scrollY;
     slideH = slides[0].offsetHeight;
   }
+
   const yOf = i => Math.round(deckTop + i * slideH);
 
   function nearest(y) {
@@ -38,85 +31,82 @@ export function createScroller(slides, onIndex) {
     return best;
   }
 
-  /** animate the page to slide `i` — works identically in both directions */
-  function goTo(i, instant) {
-    i = clampIndex(i);
-    const from = scrollY, to = yOf(i), dist = to - from;
+  function finishAnimation() {
+    animating = false;
+    document.documentElement.style.scrollSnapType = '';
+    clearTimeout(lockTimer);
+    lockTimer = setTimeout(() => {}, 90);
+  }
 
-    if (i !== index) { index = i; onIndex(index); }
+  function goTo(i, instant = false) {
+    i = clampIndex(i);
+    const from = scrollY;
+    const to = yOf(i);
+    const dist = to - from;
 
     cancelAnimationFrame(raf);
     clearTimeout(settleTimer);
 
+    if (i !== index) {
+      index = i;
+      onIndex(index);
+    }
+
     if (instant || reduce || Math.abs(dist) < 1) {
-      scrollTo(0, to);
       animating = false;
-      release();
+      document.documentElement.style.scrollSnapType = 'none';
+      scrollTo(0, to);
+      document.documentElement.style.scrollSnapType = '';
       return;
     }
 
+    // CSS scroll-snap can fight a programmatic reverse scroll. Disable it only
+    // while our controlled animation is running, then restore it afterwards.
+    document.documentElement.style.scrollSnapType = 'none';
     animating = true;
-    window.scrollTo({ top: to, behavior: 'smooth' });
-    
-    // We don't know exactly when smooth scroll ends natively, so we guess based on dist
-    const dur = Math.min(1000, 380 + Math.abs(dist) / innerHeight * 420);
-    setTimeout(() => {
-      animating = false;
-      release();
-    }, dur);
-  }
 
-  /** hold the wheel off briefly so trackpad inertia can't skip three slides */
-  function release() {
-    clearTimeout(lockTimer);
-    lockTimer = setTimeout(() => { lock = false; }, 90);
-  }
+    const duration = Math.min(1000, 380 + Math.abs(dist) / innerHeight * 420);
+    const start = performance.now();
 
-  /** does something under the pointer still have room to scroll itself? */
-  function innerScrollable(el, dir) {
-    for (let n = el; n && n !== document.body; n = n.parentElement) {
-      if (n.scrollHeight - n.clientHeight < 2) continue;
-      const oy = getComputedStyle(n).overflowY;
-      if (oy !== 'auto' && oy !== 'scroll') continue;
-      if (dir > 0 && n.scrollTop + n.clientHeight < n.scrollHeight - 1) return true;
-      if (dir < 0 && n.scrollTop > 1) return true;
+    function step(now) {
+      const p = Math.min((now - start) / duration, 1);
+      scrollTo(0, from + dist * ease(p));
+
+      if (p < 1) {
+        raf = requestAnimationFrame(step);
+      } else {
+        scrollTo(0, to);
+        finishAnimation();
+      }
     }
-    return false;
+
+    raf = requestAnimationFrame(step);
   }
 
-  // Wheel hijacking removed to allow native scroll snapping and fix "laggy/hanging" scroll feel
-  /*
-  if (!reduce) {
-    addEventListener('wheel', e => {
-      if (e.ctrlKey) return;                                  // pinch-zoom
-      const dir = Math.sign(e.deltaY);
-      if (!dir) return;
-      if (innerScrollable(e.target, dir)) return;             // let the slide body scroll first
-      e.preventDefault();
-      if (animating || lock) return;
-      if (Math.abs(e.deltaY) < 3) return;                     // a nudge is enough, noise is not
-      if ((dir > 0 && index === last()) || (dir < 0 && index === 0)) return;
-      lock = true;
-      goTo(index + dir);
-    }, { passive: false });
-  }
-  */
-
-  // scrollbar drags, touch momentum, browser restores — resync, then settle onto a slide
   addEventListener('scroll', () => {
     if (animating) return;
+
     const i = nearest(scrollY);
-    if (i !== index) { index = i; onIndex(index); }
+    if (i !== index) {
+      index = i;
+      onIndex(index);
+    }
+
     clearTimeout(settleTimer);
     settleTimer = setTimeout(() => {
-      if (!animating && Math.abs(scrollY - yOf(index)) > 2) goTo(index);
+      if (!animating && Math.abs(scrollY - yOf(index)) > 2) {
+        goTo(index);
+      }
     }, 180);
   }, { passive: true });
 
-  addEventListener("resize", () => { measure(); if (!animating) scrollTo(0, yOf(index)); });
+  addEventListener('resize', () => {
+    measure();
+    if (!animating) scrollTo(0, yOf(index));
+  });
 
   measure();
-  addEventListener("load", measure);
+  addEventListener('load', measure);
 
   return { goTo, index: () => index, count: () => slides.length };
 }
