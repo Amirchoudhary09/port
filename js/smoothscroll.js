@@ -86,6 +86,8 @@ export function createScroller(slides, onIndex) {
     return false;
   }
 
+  // Wheel hijacking removed to allow native scroll snapping and fix "laggy/hanging" scroll feel
+  /*
   if (!reduce) {
     addEventListener('wheel', e => {
       if (e.ctrlKey) return;                                  // pinch-zoom
@@ -100,6 +102,7 @@ export function createScroller(slides, onIndex) {
       goTo(index + dir);
     }, { passive: false });
   }
+  */
 
   // scrollbar drags, touch momentum, browser restores — resync, then settle onto a slide
   addEventListener('scroll', () => {

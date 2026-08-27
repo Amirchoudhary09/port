@@ -1,6 +1,8 @@
 /* ===== the deck: sticky slides that swap upward on scroll ===== */
-/* motion is driven by js/smoothscroll.js — no native smooth/snap fighting it */
-html{scroll-behavior:auto}
+html {
+  scroll-behavior: smooth;
+  scroll-snap-type: y mandatory;
+}
 
 #deck{position:relative;z-index:2}
 
@@ -9,13 +11,14 @@ html{scroll-behavior:auto}
   z-index:var(--i,1);
   display:flex;align-items:center;
   overflow:hidden;
-  background:
-    linear-gradient(180deg,rgba(5,6,10,.44),rgba(5,6,10,.66) 45%,rgba(5,6,10,.80));
+  scroll-snap-align: start;
+  scroll-snap-stop: always;
+  background: transparent;
   border-top:1px solid transparent;
   will-change:transform;
 }
 /* first slide has nothing above it — keep it clean */
-.slide:first-child{background:linear-gradient(180deg,rgba(5,6,10,.28),rgba(5,6,10,.58))}
+.slide:first-child{background:transparent}
 
 /* the visible panel edge as a slide rises over the previous one */
 .slide::before{
@@ -34,7 +37,8 @@ html{scroll-behavior:auto}
     translateY(calc(var(--p,0) * -8vh))
     scale(calc(1 - var(--p,0) * .09))
     rotateX(calc(var(--p,0) * 2.5deg));
-  opacity:calc(1 - var(--p,0) * .85);
+  /* Fade out completely before the slide is fully covered to fix bleeding text */
+  opacity:calc(1 - var(--p,0) * 1.5);
   filter:blur(calc(var(--p,0) * 4px));
   transform-origin:50% 0;
   transform-style:preserve-3d;
@@ -48,7 +52,7 @@ html{scroll-behavior:auto}
 
 @media (prefers-reduced-motion:reduce){
   html{scroll-snap-type:none !important}
-  .slide{position:relative;height:auto;overflow:visible;background:none}
+  .slide{position:relative;height:auto;overflow:visible;background:none;scroll-snap-align:none}
   .slide__inner{max-height:none;overflow:visible;transform:none;opacity:1;filter:none;padding:80px 0}
 }
 
