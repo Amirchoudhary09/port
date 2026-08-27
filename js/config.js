@@ -5,7 +5,7 @@
  */
 export const SECTIONS = [
   { id: 'top',     file: 'hero.html',         label: 'Home',         icon: 'home',   cls: 'hero' },
-  { id: 'about',   file: 'about.html',        label: 'At a glance',  icon: 'spark'   },
+  { id: 'about',   file: 'about.html',        label: 'About me',     icon: 'spark'   },
   { id: 'work',    file: 'experience.html',   label: 'Experience',   icon: 'brief'   },
   { id: 'projects',file: 'projects.html',     label: 'Projects',     icon: 'layers'  },
   { id: 'skills',  file: 'skills.html',       label: 'Skills',       icon: 'code'    },
