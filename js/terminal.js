@@ -68,7 +68,7 @@ const COMMANDS = {
   certs: () => [
     'Jun 2024  Google for Developers — Virtual Internship',
     'May 2025  Cisco — CCNA / Python',
-    'Jan 2025  Web Development Competition — See Caller',
+    'Jan 2025  Web Development Competition (inter-college) — See Caller',
     'Nov 2024  Coding Competition — HackSprint, GDG GL Bajaj',
   ],
 
