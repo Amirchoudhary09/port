@@ -86,7 +86,8 @@ function initForm() {
       const r = await fetch(`https://formsubmit.co/ajax/${TO}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
-        body: JSON.stringify({ ...data, _subject: `Portfolio: ${data.subject}`, _template: 'table' }),
+        // box = FormSubmit's framed email; _replyto lets Amir hit Reply and reach the sender
+        body: JSON.stringify({ ...data, _subject: `Portfolio: ${data.subject}`, _template: 'box', _replyto: data.email }),
       });
       const j = await r.json().catch(() => ({}));
       if (!r.ok || String(j.success) === 'false') throw new Error(j.message || `HTTP ${r.status}`);
@@ -98,7 +99,8 @@ function initForm() {
     } catch (err) {
       // never leave someone stuck: hand them a ready-made email instead
       const body = `${data.message}\n\n— ${data.name} (${data.email})`;
-      say(`Couldn't send right now (${err.message}). `, 'err');
+      const why = /activat/i.test(err.message) ? "The form isn't switched on yet. " : `Couldn't send right now (${err.message}). `;
+      say(why, 'err');
       const a = document.createElement('a');
       a.href = `mailto:${TO}?subject=${encodeURIComponent(data.subject)}&body=${encodeURIComponent(body)}`;
       a.textContent = 'Email me directly instead →';
