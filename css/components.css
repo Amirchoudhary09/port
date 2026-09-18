@@ -73,6 +73,7 @@
 .card ul{padding-left:17px;margin:0 0 18px}
 .card li{margin-bottom:8px}
 .card li strong{color:var(--tx);font-weight:600}
+.card li code{font-family:var(--mono);font-size:12.5px;color:var(--b);background:rgba(34,211,238,.08);padding:1px 6px;border-radius:6px}
 .links{display:flex;gap:10px;flex-wrap:wrap}
 .links a{font-family:var(--mono);font-size:12px;text-decoration:none;color:var(--tx);
   border:1px solid var(--line);padding:7px 14px;border-radius:999px;transition:all .3s var(--ease)}
@@ -336,22 +337,21 @@
 
 @media(max-width: 900px) { .contact-grid { grid-template-columns: 1fr; } .f-row { grid-template-columns: 1fr; } }
 
-/* ===== NEW FOOTER ===== */
-.new-foot { border-top: 1px solid var(--line); padding: 30px 0; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 20px; }
-.nf-brand { font-family: var(--mono); font-weight: 800; font-size: 20px; color: var(--tx); margin-bottom: 8px; display: block; }
-.nf-sub { color: var(--mut); font-size: 13px; }
-.nf-right { text-align: right; }
-.nf-copy { color: var(--mut); font-size: 13px; margin-bottom: 12px; }
-.nf-icons { display: flex; gap: 15px; justify-content: flex-end; }
-.nf-icons a { color: var(--mut); transition: color .3s; }
-.nf-icons a:hover { color: var(--b); }
-.nf-icons svg { width: 18px; height: 18px; }
-@media(max-width: 700px) { .new-foot { flex-direction: column; text-align: center; } .nf-right { text-align: center; } .nf-icons { justify-content: center; } }
+/* footer (styles in the "footer (last slide)" block above) — extra bits it needs */
+.foot{margin-top:56px}
+.foot__brand b{font-family:var(--mono);font-size:1.1rem}
+.foot__where i{display:inline-block;width:6px;height:6px;margin-right:8px;border-radius:50%;background:var(--b);
+  box-shadow:0 0 0 0 var(--b);animation:pulse 2s infinite;vertical-align:1px}
+.foot .foot__col a{text-align:left}
+.foot__bar span:first-child{color:var(--tx)}
+@media(max-width:560px){
+  .foot__cols{grid-template-columns:1fr}
+  .foot__bar{flex-direction:column;gap:12px}
+}
 
 /* contact: phone reveal button, text badges, honeypot, form status */
 button.c-block{width:100%;font:inherit;text-align:left;cursor:pointer;color:inherit}
-.c-soc .txt,.nf-icons .txt{font-family:var(--mono);font-size:11px;font-weight:600;letter-spacing:.02em}
-.nf-icons .txt{font-size:12px}
+.c-soc .txt{font-family:var(--mono);font-size:11px;font-weight:600;letter-spacing:.02em}
 .hp{position:absolute !important;left:-9999px;width:1px;height:1px;overflow:hidden;opacity:0}
 .btn-send__label{display:inline;font-size:inherit;color:inherit;margin:0;font-weight:inherit}
 .btn-send[disabled]{opacity:.7;cursor:progress}

@@ -40,9 +40,11 @@ const COMMANDS = {
 
   projects: () => [
     '1. Real-time Water & Planar Reflections — C++ / DirectX 12 / HLSL, Wasp3D engine',
-    `2. AshGuard — women-safety app, 200+ users · [live](https://enchantress-ashguard.vercel.app/) · [code](${LINKS.github}/ASHGUARD)`,
-    `3. Lost & Found Community Platform — MERN · [live](https://lost-and-find-ytbs.vercel.app/) · [code](${LINKS.github}/lost-and-find)`,
-    `4. AI Trip Planner — React + Gemini · [live](https://enchantress-trips-planner.vercel.app/) · [code](${LINKS.github}/Travel-Itinerary-Planner-)`,
+    `2. DirectX 12 Procedural Mesh Renderer — C++ / Win32 / HLSL · [code](${LINKS.github}/Cube_by_dx12)`,
+    `3. AshGuard — women-safety app, 200+ users · [live](https://enchantress-ashguard.vercel.app/) · [code](${LINKS.github}/ASHGUARD)`,
+    `4. Gemini Function-Calling Agents — Node + Gemini 2.5 Flash · [code](${LINKS.github}/gen-ai)`,
+    `5. Lost & Found Community Platform — MERN · [live](https://lost-and-find-ytbs.vercel.app/) · [code](${LINKS.github}/lost-and-find)`,
+    `6. AI Trip Planner — React + Gemini · [live](https://enchantress-trips-planner.vercel.app/) · [code](${LINKS.github}/Travel-Itinerary-Planner-)`,
     'Type `goto projects` to see them properly.',
   ],
 
