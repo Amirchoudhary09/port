@@ -87,7 +87,7 @@ function initForm() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
         // box = FormSubmit's framed email; _replyto lets Amir hit Reply and reach the sender
-        body: JSON.stringify({ ...data, _subject: `Portfolio: ${data.subject}`, _template: 'box', _replyto: data.email }),
+        body: JSON.stringify({ ...data, _subject: `Portfolio message from ${data.name} — ${data.subject}`, _template: 'box', _replyto: data.email }),
       });
       const j = await r.json().catch(() => ({}));
       if (!r.ok || String(j.success) === 'false') throw new Error(j.message || `HTTP ${r.status}`);
