@@ -606,8 +606,8 @@
     </div>
 
     <div class="contact-form-col">
-      <!-- action/method are the no-JS fallback; form.js takes over and posts via fetch -->
-      <form id="contact-form" action="https://formsubmit.co/amirchoudharyb03@gmail.com" method="POST">
+      <!-- without JS the browser hands the fields to the mail app; form.js does the same with a nicer message -->
+      <form id="contact-form" action="mailto:amirchoudharyb03@gmail.com" method="post" enctype="text/plain">
         <div class="f-row">
           <label><span>Your Name</span><input type="text" name="name" placeholder="Enter name" autocomplete="name" required></label>
           <label><span>Your Email</span><input type="email" name="email" placeholder="Enter email" autocomplete="email" required></label>
@@ -616,8 +616,6 @@
         <label><span>Your Message</span><textarea name="message" rows="5" placeholder="Let's build something..." required></textarea></label>
         <!-- honeypot: people never see it, bots fill it and get dropped -->
         <label class="hp" aria-hidden="true"><span>Leave this empty</span><input type="text" name="_honey" tabindex="-1" autocomplete="off"></label>
-        <input type="hidden" name="_template" value="box">
-        <input type="hidden" name="_next" value="https://port-omega-rust.vercel.app/#contact">
         <button type="submit" class="btn-send"><span class="btn-send__label">Send Message</span> <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path></svg></button>
         <p class="form__status" role="status" aria-live="polite"></p>
       </form>

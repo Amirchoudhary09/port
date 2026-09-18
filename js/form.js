@@ -1,9 +1,18 @@
 /**
- * Contact slide: the form (FormSubmit.co over fetch, plain POST as the no-JS
- * fallback) and the click-to-reveal phone number.
+ * Contact slide: the form and the click-to-reveal phone number.
+ *
+ * Delivery: the visitor's own mail app opens with the message addressed to
+ * Amir — no third party, nothing to activate, the mail comes from the
+ * visitor's address so "Reply" just works.
+ *
+ * FormSubmit.co can deliver silently instead (visitor never leaves the page),
+ * but only after Amir clicks the one-time "Activate Form" email it sends.
+ * Flip FORMSUBMIT_ACTIVATED to true once that's done; the mail-app path stays
+ * as the fallback if FormSubmit ever fails.
  */
 const TO    = 'amirchoudharyb03@gmail.com';
 const PHONE = { text: '+91 94571 14241', href: 'tel:+919457114241' };
+const FORMSUBMIT_ACTIVATED = false;
 
 export function initContact() {
   initPhoneReveal();
@@ -25,6 +34,10 @@ function initPhoneReveal() {
   }, { once: true });
 }
 
+const subjectFor = d => `Portfolio message from ${d.name} — ${d.subject}`;
+const bodyFor    = d => `${d.message}\n\n— ${d.name}\n${d.email}`;
+const mailtoFor  = d => `mailto:${TO}?subject=${encodeURIComponent(subjectFor(d))}&body=${encodeURIComponent(bodyFor(d))}`;
+
 function initForm() {
   const form = document.getElementById('contact-form');
   if (!form) return;
@@ -45,6 +58,32 @@ function initForm() {
   function say(msg, kind = '') {
     status.textContent = msg;
     status.className = 'form__status' + (kind && ' ' + kind);
+  }
+
+  /** hand the message to the visitor's mail app, with a copy button in case there is none */
+  function openMailApp(d) {
+    location.href = mailtoFor(d);
+    say('Your email app has opened with the message — just press Send there. ', 'ok');
+    const copy = document.createElement('button');
+    copy.type = 'button';
+    copy.className = 'form__copy';
+    copy.textContent = 'No mail app? Copy the message';
+    copy.addEventListener('click', () => {
+      navigator.clipboard.writeText(`To: ${TO}\nSubject: ${subjectFor(d)}\n\n${bodyFor(d)}`)
+        .then(() => { copy.textContent = `Copied — paste it into an email to ${TO}`; })
+        .catch(() => { copy.textContent = `Email ${TO} with your message`; });
+    });
+    status.append(copy);
+  }
+
+  async function sendViaFormSubmit(d) {
+    const r = await fetch(`https://formsubmit.co/ajax/${TO}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+      body: JSON.stringify({ ...d, _subject: subjectFor(d), _template: 'box', _replyto: d.email }),
+    });
+    const j = await r.json().catch(() => ({}));
+    if (!r.ok || String(j.success) === 'false') throw new Error(j.message || `HTTP ${r.status}`);
   }
 
   form.addEventListener('input', e => {
@@ -77,34 +116,20 @@ function initForm() {
       return;
     }
 
+    if (!FORMSUBMIT_ACTIVATED) { openMailApp(data); return; }
+
     busy = true;
     btn.disabled = true;
     label.textContent = 'Sending…';
     say('');
-
     try {
-      const r = await fetch(`https://formsubmit.co/ajax/${TO}`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
-        // box = FormSubmit's framed email; _replyto lets Amir hit Reply and reach the sender
-        body: JSON.stringify({ ...data, _subject: `Portfolio message from ${data.name} — ${data.subject}`, _template: 'box', _replyto: data.email }),
-      });
-      const j = await r.json().catch(() => ({}));
-      if (!r.ok || String(j.success) === 'false') throw new Error(j.message || `HTTP ${r.status}`);
-
+      await sendViaFormSubmit(data);
       form.reset();
       label.textContent = 'Sent ✓';
       btn.classList.add('ok');
       say("Message sent — I'll get back to you soon.", 'ok');
-    } catch (err) {
-      // never leave someone stuck: hand them a ready-made email instead
-      const body = `${data.message}\n\n— ${data.name} (${data.email})`;
-      const why = /activat/i.test(err.message) ? "The form isn't switched on yet. " : `Couldn't send right now (${err.message}). `;
-      say(why, 'err');
-      const a = document.createElement('a');
-      a.href = `mailto:${TO}?subject=${encodeURIComponent(data.subject)}&body=${encodeURIComponent(body)}`;
-      a.textContent = 'Email me directly instead →';
-      status.append(a);
+    } catch {
+      openMailApp(data);                          // never leave someone stuck
     } finally {
       busy = false;
       setTimeout(() => {

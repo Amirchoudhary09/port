@@ -102,8 +102,14 @@ slideHeight` — using `offsetTop` silently breaks paging backwards.
 
 ## Contact form
 
-Submissions go to FormSubmit.co (`js/form.js`, and the plain `<form action>` as
-the no-JS fallback). The first submission from a new domain sends an activation
-email to the inbox — click it once, after that everything is delivered. A
-honeypot field drops bots; if sending fails the visitor gets a ready-made
-`mailto:` link instead.
+`js/form.js` validates the fields and then opens the visitor's own mail app
+with the message addressed to `amirchoudharyb03@gmail.com` (subject
+"Portfolio message from <name> — <subject>"), with a copy-the-message button
+for people without a mail app. Nothing to configure, and the mail arrives from
+the visitor's address so Reply works.
+
+Silent delivery (visitor never leaves the page) is wired up through
+FormSubmit.co but off by default: it only works after the one-time
+"Activate Form" email FormSubmit sends to the inbox has been clicked. Once
+that's done, set `FORMSUBMIT_ACTIVATED = true` in `js/form.js`; the mail-app
+path stays as the fallback. A honeypot field drops bots either way.
