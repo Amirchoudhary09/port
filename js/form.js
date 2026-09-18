@@ -1,18 +1,24 @@
 /**
  * Contact slide: the form and the click-to-reveal phone number.
  *
- * Delivery: the visitor's own mail app opens with the message addressed to
- * Amir — no third party, nothing to activate, the mail comes from the
- * visitor's address so "Reply" just works.
- *
- * FormSubmit.co can deliver silently instead (visitor never leaves the page),
- * but only after Amir clicks the one-time "Activate Form" email it sends.
- * Flip FORMSUBMIT_ACTIVATED to true once that's done; the mail-app path stays
- * as the fallback if FormSubmit ever fails.
+ * Delivery without any third-party account: the message is encrypted right
+ * here in the browser (AES-256-GCM, key wrapped with RSA-OAEP) and dropped on
+ * an ntfy.sh topic that only ever holds ciphertext. A GitHub Actions job in
+ * Amir's private contact-inbox repo picks it up, decrypts it with the matching
+ * private key and files it as an issue — which GitHub emails to him.
+ * If the drop fails (no network, a browser without WebCrypto) the visitor's own
+ * mail app opens with the message instead, so nothing is ever lost.
  */
 const TO    = 'amirchoudharyb03@gmail.com';
 const PHONE = { text: '+91 94571 14241', href: 'tel:+919457114241' };
-const FORMSUBMIT_ACTIVATED = false;
+const DROP  = 'https://ntfy.sh';
+const TOPIC = 'amir-portfolio-inbox-c9f395c61d19';
+// public half of contact-inbox/key.pem (SPKI, base64) — regenerate both together
+const PUBLIC_KEY =
+  'MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA3xDboXMBC0hAsma3MB0F1j0pQCYdY+G20AIkJrUNPksdspakIsOKalDKSEiaG56KAC0+BQq+YIf5fdu/OPNe' +
+  'ai71oaCC70kgi9XoZgTlVwQR4qmVwiJ/ekS78cGAi5a4qP1kZ2priUs5/onA+a59ns9Z4VeYDYG50wAt+nGmaJclOtgt4OBhSIkE3+7wUU21Nv5GqV8t10PImAKM724j' +
+  'Y/7H8gOOrPEkcDxVn425BIm93sNf6GVMAbVGhILdBzARXN8SfOpFFuwW+gNw5TkTsnFUCgvOTF6tAlHG/5LnUiBDwR32rpSeLDNpIU0emVgeVJPHE8Sx8D+FoRIRVbB6' +
+  'uQIDAQAB';
 
 export function initContact() {
   initPhoneReveal();
@@ -34,6 +40,26 @@ function initPhoneReveal() {
   }, { once: true });
 }
 
+/* ---- the envelope: AES-GCM for the message, RSA-OAEP for the AES key ---- */
+const b64 = buf => btoa(String.fromCharCode(...new Uint8Array(buf)));
+
+async function seal(payload) {
+  const der = Uint8Array.from(atob(PUBLIC_KEY), c => c.charCodeAt(0));
+  const rsa = await crypto.subtle.importKey('spki', der, { name: 'RSA-OAEP', hash: 'SHA-256' }, false, ['encrypt']);
+  const aes = await crypto.subtle.generateKey({ name: 'AES-GCM', length: 256 }, true, ['encrypt']);
+  const iv  = crypto.getRandomValues(new Uint8Array(12));
+  const ct  = await crypto.subtle.encrypt({ name: 'AES-GCM', iv }, aes, new TextEncoder().encode(JSON.stringify(payload)));
+  const k   = await crypto.subtle.encrypt({ name: 'RSA-OAEP' }, rsa, await crypto.subtle.exportKey('raw', aes));
+  return { v: 1, k: b64(k), iv: b64(iv), ct: b64(ct) };
+}
+
+async function drop(payload) {
+  const envelope = await seal(payload);
+  // plain text body = no CORS preflight; ntfy reads the JSON publish format from the body
+  const r = await fetch(DROP, { method: 'POST', body: JSON.stringify({ topic: TOPIC, title: 'portfolio-message', message: JSON.stringify(envelope) }) });
+  if (!r.ok) throw new Error(`drop box answered ${r.status}`);
+}
+
 const subjectFor = d => `Portfolio message from ${d.name} — ${d.subject}`;
 const bodyFor    = d => `${d.message}\n\n— ${d.name}\n${d.email}`;
 const mailtoFor  = d => `mailto:${TO}?subject=${encodeURIComponent(subjectFor(d))}&body=${encodeURIComponent(bodyFor(d))}`;
@@ -52,7 +78,7 @@ function initForm() {
     name:    v => v.trim().length >= 2  || 'Please add your name.',
     email:   v => /^[^@\s]+@[^@\s]+\.[^@\s]{2,}$/.test(v.trim()) || 'That email address looks off.',
     subject: v => v.trim().length >= 3  || 'Give the message a subject.',
-    message: v => v.trim().length >= 10 || 'Tell me a little more — 10 characters minimum.',
+    message: v => (v.trim().length >= 10 && v.trim().length <= 1500) || 'Between 10 and 1500 characters, please.',
   };
 
   function say(msg, kind = '') {
@@ -60,10 +86,10 @@ function initForm() {
     status.className = 'form__status' + (kind && ' ' + kind);
   }
 
-  /** hand the message to the visitor's mail app, with a copy button in case there is none */
-  function openMailApp(d) {
+  /** fallback: hand the message to the visitor's mail app, with a copy button in case there is none */
+  function openMailApp(d, why) {
     location.href = mailtoFor(d);
-    say('Your email app has opened with the message — just press Send there. ', 'ok');
+    say(`${why} Your email app has opened with the message — just press Send there. `, 'err');
     const copy = document.createElement('button');
     copy.type = 'button';
     copy.className = 'form__copy';
@@ -74,16 +100,6 @@ function initForm() {
         .catch(() => { copy.textContent = `Email ${TO} with your message`; });
     });
     status.append(copy);
-  }
-
-  async function sendViaFormSubmit(d) {
-    const r = await fetch(`https://formsubmit.co/ajax/${TO}`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
-      body: JSON.stringify({ ...d, _subject: subjectFor(d), _template: 'box', _replyto: d.email }),
-    });
-    const j = await r.json().catch(() => ({}));
-    if (!r.ok || String(j.success) === 'false') throw new Error(j.message || `HTTP ${r.status}`);
   }
 
   form.addEventListener('input', e => {
@@ -116,20 +132,18 @@ function initForm() {
       return;
     }
 
-    if (!FORMSUBMIT_ACTIVATED) { openMailApp(data); return; }
-
     busy = true;
     btn.disabled = true;
     label.textContent = 'Sending…';
     say('');
     try {
-      await sendViaFormSubmit(data);
+      await drop({ ...data, when: Date.now(), page: location.href });
       form.reset();
       label.textContent = 'Sent ✓';
       btn.classList.add('ok');
       say("Message sent — I'll get back to you soon.", 'ok');
     } catch {
-      openMailApp(data);                          // never leave someone stuck
+      openMailApp(data, "Couldn't reach the inbox.");
     } finally {
       busy = false;
       setTimeout(() => {

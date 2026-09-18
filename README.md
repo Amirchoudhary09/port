@@ -102,14 +102,14 @@ slideHeight` — using `offsetTop` silently breaks paging backwards.
 
 ## Contact form
 
-`js/form.js` validates the fields and then opens the visitor's own mail app
-with the message addressed to `amirchoudharyb03@gmail.com` (subject
-"Portfolio message from <name> — <subject>"), with a copy-the-message button
-for people without a mail app. Nothing to configure, and the mail arrives from
-the visitor's address so Reply works.
+No third-party form service and nothing to activate. `js/form.js` encrypts the
+message in the browser (AES-256-GCM, key wrapped with the RSA public key in the
+file) and posts the envelope to a random ntfy.sh topic — a public drop box that
+only ever holds ciphertext. The private repo `Amirchoudhary09/contact-inbox`
+runs a GitHub Actions job twice an hour that decrypts new envelopes with the
+matching `key.pem` and opens one issue per message; GitHub's notification
+email for that issue is the delivery. If the drop fails, the visitor's own mail
+app opens with the message instead. A honeypot field drops bots.
 
-Silent delivery (visitor never leaves the page) is wired up through
-FormSubmit.co but off by default: it only works after the one-time
-"Activate Form" email FormSubmit sends to the inbox has been clicked. Once
-that's done, set `FORMSUBMIT_ACTIVATED = true` in `js/form.js`; the mail-app
-path stays as the fallback. A honeypot field drops bots either way.
+Rotating the key: generate a new pair in `contact-inbox` (see its README) and
+paste the new public key into `PUBLIC_KEY` here.
