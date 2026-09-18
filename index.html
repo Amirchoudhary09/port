@@ -1,12 +1,37 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="no-js">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Amir Choudhary — Software Development Engineer</title>
-<meta name="description" content="Amir Choudhary — SDE working on real-time graphics (C++ / DirectX 12) and full-stack MERN applications." />
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%237c5cff'/%3E%3Cstop offset='.55' stop-color='%2322d3ee'/%3E%3Cstop offset='1' stop-color='%23ff6b9d'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='64' height='64' rx='16' fill='%2305060a'/%3E%3Cpath d='M14 48 32 15 50 48' fill='none' stroke='url(%23g)' stroke-width='6' stroke-linecap='round' stroke-linejoin='round'/%3E%3Cpath d='M22.5 38h19' stroke='url(%23g)' stroke-width='6' stroke-linecap='round'/%3E%3C/svg%3E">
+<meta name="description" content="Amir Choudhary — Software Development Engineer at Wasp3D. Real-time graphics in C++ / DirectX 12 / HLSL, full-stack MERN apps and AI integrations. Projects, experience, résumé and contact.">
+<meta name="author" content="Amir Choudhary">
+<meta name="color-scheme" content="dark">
 <meta name="theme-color" content="#05060a">
+<link rel="canonical" href="https://port-omega-rust.vercel.app/">
+
+<!-- link previews: LinkedIn, WhatsApp, X, Slack, Discord… -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Amir Choudhary">
+<meta property="og:title" content="Amir Choudhary — Software Development Engineer">
+<meta property="og:description" content="Real-time graphics (C++ / DirectX 12) at Wasp3D · full-stack MERN · 900+ DSA problems. Projects, experience and résumé.">
+<meta property="og:url" content="https://port-omega-rust.vercel.app/">
+<meta property="og:image" content="https://port-omega-rust.vercel.app/img/og.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Amir Choudhary — Software Development Engineer">
+<meta property="og:locale" content="en_US">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Amir Choudhary — Software Development Engineer">
+<meta name="twitter:description" content="Real-time graphics (C++ / DirectX 12) at Wasp3D · full-stack MERN · 900+ DSA problems.">
+<meta name="twitter:image" content="https://port-omega-rust.vercel.app/img/og.jpg">
+
+<!-- icons -->
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="icon" href="img/icon-32.png" type="image/png" sizes="32x32">
+<link rel="apple-touch-icon" href="img/apple-touch-icon.png">
+<link rel="manifest" href="site.webmanifest">
+
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;600;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
@@ -19,18 +44,52 @@
 <link rel="stylesheet" href="css/hero.css">
 <link rel="stylesheet" href="css/scene.css">
 <link rel="stylesheet" href="css/components.css">
-<style>
-  /* shown only when the page is opened straight off disk */
-  .boot-note{position:fixed;inset:0;z-index:200;display:grid;place-content:center;gap:10px;
-    text-align:center;padding:32px;background:#05060a;font-family:'Sora',system-ui,sans-serif}
-  .boot-note h2{font-size:1.6rem;font-weight:800;letter-spacing:-.03em}
-  .boot-note p{color:#8b93a7;font-weight:300;max-width:52ch}
-  .boot-note code{font-family:'JetBrains Mono',monospace;font-size:.85em;color:#22d3ee}
-  .load-err{color:#ff6b9d;font-family:'JetBrains Mono',monospace;font-size:13px}
-</style>
+
+<!-- warm the module graph so main.js doesn't discover its imports one hop at a time -->
+<link rel="modulepreload" href="js/main.js">
+<link rel="modulepreload" href="js/config.js">
+<link rel="modulepreload" href="js/loader.js">
+<link rel="modulepreload" href="js/nav.js">
+<link rel="modulepreload" href="js/deck.js">
+<link rel="modulepreload" href="js/smoothscroll.js">
+<link rel="modulepreload" href="js/typing.js">
+<link rel="modulepreload" href="js/reveal.js">
+<link rel="modulepreload" href="js/cursor.js">
+<link rel="modulepreload" href="js/interactions.js">
+<link rel="modulepreload" href="js/form.js">
+<link rel="modulepreload" href="js/particles.js">
+<link rel="modulepreload" href="js/terminal.js">
+<link rel="modulepreload" href="js/water.js">
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Person",
+  "name": "Amir Choudhary",
+  "url": "https://port-omega-rust.vercel.app/",
+  "image": "https://port-omega-rust.vercel.app/img/profile.webp",
+  "jobTitle": "Software Development Engineer",
+  "worksFor": { "@type": "Organization", "name": "Wasp3D" },
+  "alumniOf": { "@type": "CollegeOrUniversity", "name": "G.L. Bajaj Institute of Technology and Management" },
+  "email": "mailto:amirchoudharyb03@gmail.com",
+  "address": { "@type": "PostalAddress", "addressLocality": "Greater Noida", "addressRegion": "Uttar Pradesh", "addressCountry": "IN" },
+  "sameAs": [
+    "https://github.com/Amirchoudhary09",
+    "https://linkedin.com/in/amirchoudhary09",
+    "https://leetcode.com/u/AMIR09/",
+    "https://www.geeksforgeeks.org/profile/amirchoudharyb09"
+  ],
+  "knowsAbout": ["C++", "DirectX 12", "HLSL", "Real-time rendering", "React", "Node.js", "MongoDB", "TypeScript", "Python", "Data structures and algorithms"]
+}
+</script>
+<script>
+  // flat page when JS is off, or when the file is opened straight from disk (modules can't load over file://)
+  var h = document.documentElement;
+  if (location.protocol === 'file:') h.classList.add('is-file'); else h.classList.replace('no-js', 'js');
+</script>
 </head>
 <body>
-
+<a class="skip-link" href="#about">Skip to content</a>
 <div id="prog"></div>
 
 <!-- ambient layers -->
@@ -44,13 +103,518 @@
 <div id="ring" aria-hidden="true"></div><div id="dot" aria-hidden="true"></div>
 
 <!-- top left branding -->
-<div id="top-brand">&lt;Amir.Choudhary/&gt;</div>
+<a id="top-brand" class="top-brand" href="#top" aria-label="Back to top">&lt;Amir.Choudhary/&gt;</a>
 
 <!-- icon nav (built from js/config.js) -->
 <nav class="nav" id="nav" aria-label="Sections"></nav>
 
-<!-- slides (loaded from /sections) -->
-<main id="deck"></main>
+<!--
+  The slides. One <section class="slide"> per entry in js/config.js, in the same order —
+  js/loader.js matches them by id. Content lives here (not fetched) so crawlers and
+  link previews see it.
+-->
+<main id="deck">
+
+<!-- ============ 00 · Home ============ -->
+<section class="slide" id="top" aria-label="Home">
+<div class="slide__inner">
+<div class="wrap hero">
+
+<div class="scene" aria-hidden="true">
+  <svg class="scene__svg" viewBox="0 0 300 210">
+    <defs>
+      <linearGradient id="scr" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0" stop-color="#22d3ee" stop-opacity=".35"/>
+        <stop offset="1" stop-color="#7c5cff" stop-opacity=".22"/>
+      </linearGradient>
+      <linearGradient id="edge" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0" stop-color="#7c5cff"/><stop offset="1" stop-color="#22d3ee"/>
+      </linearGradient>
+      <radialGradient id="pop">
+        <stop offset="0" stop-color="#eaf9ff" stop-opacity=".95"/>
+        <stop offset=".45" stop-color="#22d3ee" stop-opacity=".45"/>
+        <stop offset="1" stop-color="#22d3ee" stop-opacity="0"/>
+      </radialGradient>
+    </defs>
+
+    <!-- desk -->
+    <path class="desk" d="M28 168h244"/>
+
+    <!-- the kid, mid-session -->
+    <g class="rig">
+      <path class="chair" d="M112 108q-6 0-6 6v46h88v-46q0-6-6-6z"/>
+      <path class="body" d="M133 92h34l16 66h-66z"/>
+      <circle class="head" cx="150" cy="72" r="16"/>
+      <path class="hair" d="M134 68q3-16 16-16t16 16q-7-7-16-7t-16 7z"/>
+      <g class="arms">
+        <path class="arm" d="M134 98q-18 22-16 52"/>
+        <path class="arm" d="M166 98q18 22 16 52"/>
+        <circle class="hand h1" cx="120" cy="152" r="4.5"/>
+        <circle class="hand h2" cx="180" cy="152" r="4.5"/>
+      </g>
+
+      <!-- laptop -->
+      <path class="lid" d="M108 104h84l8 54h-100z"/>
+      <path class="screen" d="M113 109h74l7 44h-88z"/>
+      <g class="code">
+        <rect x="119" y="115" width="34" height="3" rx="1.5"/>
+        <rect x="119" y="122" width="52" height="3" rx="1.5"/>
+        <rect x="124" y="129" width="26" height="3" rx="1.5"/>
+        <rect x="124" y="136" width="44" height="3" rx="1.5"/>
+        <rect x="119" y="143" width="38" height="3" rx="1.5"/>
+      </g>
+      <path class="base" d="M96 158h108l10 10H86z"/>
+      <path class="pad" d="M138 161h24"/>
+    </g>
+
+    <!-- the surge -->
+    <g class="boom">
+      <circle class="pop" cx="150" cy="132" r="86" fill="url(#pop)"/>
+      <circle class="ring r1" cx="150" cy="132" r="26"/>
+      <circle class="ring r2" cx="150" cy="132" r="26"/>
+      <path class="bolt b1" d="M150 132 132 104l14 4-16-30"/>
+      <path class="bolt b2" d="M150 132 186 112l-13 8 26-14"/>
+      <path class="bolt b3" d="M150 132 118 140l12 6-30 10"/>
+      <path class="bolt b4" d="M150 132 196 154l-14 1 26 12"/>
+      <path class="bolt b5" d="M150 132 152 92l8 12 2-34"/>
+      <path class="bolt b6" d="M150 132 106 118l13-2-26-12"/>
+    </g>
+  </svg>
+
+  <p class="scene__welcome"><span>Welcome to</span><b class="grad">my book</b></p>
+</div>
+
+<!-- 3D rotating code cube -->
+<div class="code-cube-wrap" aria-hidden="true">
+  <div class="code-cube">
+    <div class="cube-face front"><code>render();</code></div>
+    <div class="cube-face back"><code>float4 col;</code></div>
+    <div class="cube-face cube-right"><code>&lt;App /&gt;</code></div>
+    <div class="cube-face cube-left"><code>app.listen</code></div>
+    <div class="cube-face cube-top"><code>vec3 norm;</code></div>
+    <div class="cube-face cube-bottom"><code>dp[i][j]</code></div>
+  </div>
+</div>
+
+<span class="tag"><i></i>  Noida, India</span>
+<h1>
+  <span class="ln"><span style="animation-delay:.35s">Amir</span></span>
+  <span class="ln"><span class="grad" style="animation-delay:.48s">Choudhary</span></span>
+</h1>
+<p class="role"><span id="type">Software Development Engineer @ Wasp3D</span><span class="cur"></span></p>
+<p class="lead">I build things that have to be fast — real-time rendering pipelines in C++ / DirectX 12 at Wasp3D, and scalable MERN applications with clean APIs, secure auth and AI integrations.</p>
+<div class="cta">
+  <a class="btn solid" href="#projects">View my work →</a>
+  <a class="btn" href="Amir-Choudhary-Resume.pdf" target="_blank" rel="noopener">↓ Résumé (PDF)</a>
+  <a class="btn" href="mailto:amirchoudharyb03@gmail.com">Get in touch</a>
+</div>
+<div class="profiles">
+  <a href="https://github.com/Amirchoudhary09" target="_blank" rel="noopener">GitHub</a>
+  <a href="https://linkedin.com/in/amirchoudhary09" target="_blank" rel="noopener">LinkedIn</a>
+  <a href="https://leetcode.com/u/AMIR09/" target="_blank" rel="noopener">LeetCode</a>
+  <a href="https://www.geeksforgeeks.org/profile/amirchoudharyb09" target="_blank" rel="noopener">GeeksforGeeks</a>
+</div>
+<div class="scroll">SCROLL</div>
+
+</div>
+</div>
+</section>
+
+<!-- ============ 01 · About Me ============ -->
+<section class="slide" id="about" aria-label="About Me">
+<div class="slide__inner">
+<div class="wrap">
+
+<div class="head rv"><em>00</em><h2>About Me</h2><div class="rule"></div></div>
+
+<div class="about">
+  <div class="about__copy rv">
+    <p>I&rsquo;m an SDE at <strong>Wasp3D</strong>, working on the rendering side of a real-time graphics engine — planar reflections, water simulation, HLSL shaders and GPU resource management in <strong>C++ / DirectX 12</strong>.</p>
+    <p>Before that I built full-stack MERN products: REST APIs, JWT &amp; OAuth auth, and AI integrations. Both halves come down to the same thing — make it correct, then make it fast.</p>
+    <p>Finishing a B.Tech in CS (AI &amp; ML) at G.L. Bajaj, and solving DSA most days.</p>
+  </div>
+
+  <div class="about__photo rv">
+    <div class="photo-frame tilt">
+      <div class="glow"></div>
+      <img src="img/profile.webp" alt="Illustrated portrait of Amir Choudhary" width="720" height="720" loading="lazy" decoding="async">
+      <div class="photo-border"></div>
+    </div>
+  </div>
+</div>
+
+<div class="stats rv">
+  <div class="stat"><b data-to="900" data-suf="+">0</b><span>DSA problems solved</span></div>
+  <div class="stat"><b data-to="50" data-suf="%">0</b><span>GPU bandwidth saved</span></div>
+  <div class="stat"><b data-to="200" data-suf="+">0</b><span>AshGuard users</span></div>
+  <div class="stat"><b data-to="3" data-pre="Top ">0</b><span>Adobe Emerge, IIT Delhi</span></div>
+</div>
+
+<figure class="snippet rv">
+  <figcaption><span class="dots"><i></i><i></i><i></i></span> water.hlsl</figcaption>
+  <pre><code><span class="c">// two RTs packed into one — half the bandwidth</span>
+<span class="k">float2</span> uv   = i.screenUV + <span class="f">Ripple</span>(i.wpos, time);
+<span class="k">float3</span> refl = ReflectionRT.<span class="f">Sample</span>(s, uv).rgb;
+<span class="k">float</span>  f    = <span class="f">Fresnel</span>(i.N, viewDir, <span class="n">0.02</span>);
+
+<span class="k">return</span> <span class="f">float4</span>(<span class="f">lerp</span>(waterTint, refl, f), <span class="n">1</span>);</code></pre>
+</figure>
+
+<div class="marq rv">
+  <div>
+    <span>C++</span><span>DirectX 12</span><span>HLSL Shaders</span><span>React.js</span><span>Node.js</span>
+    <span>MongoDB</span><span>TypeScript</span><span>Python</span><span>System Design</span><span>Gemini API</span>
+    <span>C++</span><span>DirectX 12</span><span>HLSL Shaders</span><span>React.js</span><span>Node.js</span>
+    <span>MongoDB</span><span>TypeScript</span><span>Python</span><span>System Design</span><span>Gemini API</span>
+  </div>
+</div>
+
+</div>
+</div>
+</section>
+
+<!-- ============ 02 · Experience ============ -->
+<section class="slide" id="work" aria-label="Experience">
+<div class="slide__inner">
+<div class="wrap">
+
+<div class="head rv"><em>01</em><h2>Experience</h2><div class="rule"></div></div>
+<div class="tl">
+  <article class="job rv">
+    <h3>Software Development Engineer</h3>
+    <p class="co">Wasp3D · Noida, India (Onsite)</p>
+    <p class="when">April 2026 — Present</p>
+    <ul>
+      <li>Optimized the planar reflection rendering pipeline by reducing render targets from <strong>2 to 1</strong>, cutting GPU memory bandwidth usage by <strong>~50%</strong> while preserving visual quality via render-target packing.</li>
+      <li>Implemented real-time water rendering — <strong>ripple simulation, flow-map animation, distortion and planar reflections</strong> — improving rendering stability and visual fidelity by <strong>30%</strong>.</li>
+      <li>Developed and debugged <strong>HLSL vertex and pixel shaders</strong>, cutting reflection, lighting, material and texture-sampling defects by <strong>40%</strong>.</li>
+      <li>Optimized graphics engine components in <strong>C++ and DirectX 9/12</strong> — render targets, textures, GPU resource management — for a <strong>20%</strong> gain in performance and resource utilization.</li>
+    </ul>
+  </article>
+  <article class="job rv">
+    <h3>Software Development Engineer Intern</h3>
+    <p class="co">Bluestocks Fintech · Remote</p>
+    <p class="when">March 2025 — May 2025</p>
+    <ul>
+      <li>Built a responsive Services page in <strong>React.js + Tailwind CSS</strong> with a modular component architecture, improving page load performance by <strong>20%</strong>; shipped full <strong>CRUD REST APIs</strong> with Express.js and MongoDB.</li>
+      <li>Tested APIs in <strong>Postman</strong> with proper error handling, status codes and edge-case validation for a reliable frontend–backend data flow.</li>
+      <li>Improved UI consistency across modules and worked in <strong>Agile sprints</strong>, presenting features to stakeholders in bi-weekly demos.</li>
+    </ul>
+  </article>
+  <article class="job rv">
+    <h3>B.Tech, Computer Science — AI &amp; Machine Learning</h3>
+    <p class="co">G.L. Bajaj Institute of Technology and Management · Greater Noida</p>
+    <p class="when">2022 — 2026 · CGPA 8.01 / 10</p>
+  </article>
+</div>
+
+</div>
+</div>
+</section>
+
+<!-- ============ 03 · Projects ============ -->
+<section class="slide" id="projects" aria-label="Projects">
+<div class="slide__inner">
+<div class="wrap">
+
+<div class="head rv"><em>02</em><h2>Selected Projects</h2><div class="rule"></div></div>
+<div class="grid">
+  <article class="card rv tilt card--gfx">
+    <div class="glow"></div>
+    <div class="card__img card__demo">
+      <!-- js/water.js draws a small WebGL water sketch here; move the cursor over it -->
+      <canvas class="water" role="img" aria-label="Interactive water rendering demo: waves, cursor ripples and Fresnel reflections"></canvas>
+      <span class="demo-tag"><i></i>WebGL · live</span>
+    </div>
+    <h3>Real-time Water &amp; Planar Reflections</h3>
+    <p class="stack">C++ · DirectX 12 · HLSL · Wasp3D engine</p>
+    <ul>
+      <li>Ripple simulation, flow-map animation, distortion and <strong>planar reflections</strong> shipped inside a production real-time graphics engine.</li>
+      <li>Packed two reflection render targets into one — <strong>~50% less GPU bandwidth</strong> at identical visual quality.</li>
+      <li>The canvas above is a tiny WebGL sketch of the same idea: waves + ripples → normals → <strong>Fresnel-weighted reflection</strong>.</li>
+    </ul>
+    <div class="links">
+      <span class="pill">Proprietary engine</span>
+      <a href="#about">Shader snippet ↗</a>
+      <a href="#work">Role details ↗</a>
+    </div>
+  </article>
+  <article class="card rv tilt">
+    <div class="glow"></div>
+    <div class="card__img">
+      <img src="img/ashguard.webp" alt="AshGuard dashboard — live location map, SOS button, safe route finder and emergency contacts" width="1200" height="670" loading="lazy" decoding="async">
+    </div>
+    <h3>AshGuard — Women Safety &amp; Travel Assistant</h3>
+    <p class="stack">React.js · Python · Express.js · MongoDB Atlas · Gemini AI · ML</p>
+    <ul>
+      <li>AI-powered safety web app with real-time SOS alerts, live location tracking and a <strong>1-Tap SOS</strong> system (fake call, live recording, guardian alert, police dial, siren).</li>
+      <li><strong>Safe Route Finder</strong> using Google Maps API and <strong>K-Means clustering</strong> to detect crime-prone areas — <strong>93% route accuracy</strong>.</li>
+      <li>Full-stack build with a <strong>Gemini AI chatbot</strong> and JWT auth, deployed on Vercel &amp; Railway, serving <strong>200+ active users</strong>.</li>
+    </ul>
+    <div class="links">
+      <a href="https://enchantress-ashguard.vercel.app/" target="_blank" rel="noopener">Live ↗</a>
+      <a href="https://github.com/Amirchoudhary09/ASHGUARD" target="_blank" rel="noopener">GitHub ↗</a>
+    </div>
+  </article>
+  <article class="card rv tilt">
+    <div class="glow"></div>
+    <div class="card__img">
+      <img src="img/lostandfound.webp" alt="Lost &amp; Found platform — found-item cards with search filters and matching results" width="1200" height="670" loading="lazy" decoding="async">
+    </div>
+    <h3>Lost &amp; Found Community Platform</h3>
+    <p class="stack">MERN — React.js · Node.js · Express.js · MongoDB</p>
+    <ul>
+      <li>Full-stack lost &amp; found app with image uploads, location tagging, AI-powered filtering and a matching algorithm that suggests potential item matches.</li>
+      <li><strong>RESTful APIs</strong> on Node.js/Express with MongoDB Atlas, secured by <strong>JWT and OAuth 2.0 (Google Sign-In)</strong>.</li>
+      <li>Interactive React frontend with real-time filtering by location and category; query optimization delivered <strong>40% faster search</strong>.</li>
+    </ul>
+    <div class="links">
+      <a href="https://lost-and-find-ytbs.vercel.app/" target="_blank" rel="noopener">Live ↗</a>
+      <a href="https://github.com/Amirchoudhary09/lost-and-find" target="_blank" rel="noopener">GitHub ↗</a>
+    </div>
+  </article>
+  <article class="card rv tilt">
+    <div class="glow"></div>
+    <div class="card__img">
+      <img src="img/trip_planner.webp" alt="AI Trip Planner — route map with a day-by-day itinerary" width="1024" height="1024" loading="lazy" decoding="async">
+    </div>
+    <h3>AI Trip Planner</h3>
+    <p class="stack">React.js · Python · Express.js · Gemini AI</p>
+    <ul>
+      <li>An intelligent travel itinerary generator that crafts customized schedules including lodging, meals, and safety integration.</li>
+      <li>Uses <strong>Gemini AI</strong> to build personalized travel plans based on user preferences and constraints.</li>
+    </ul>
+    <div class="links">
+      <a href="https://enchantress-trips-planner.vercel.app/" target="_blank" rel="noopener">Live ↗</a>
+      <a href="https://github.com/Amirchoudhary09/Travel-Itinerary-Planner-" target="_blank" rel="noopener">GitHub ↗</a>
+    </div>
+  </article>
+</div>
+
+</div>
+</div>
+</section>
+
+<!-- ============ 04 · Skills ============ -->
+<section class="slide" id="skills" aria-label="Skills">
+<div class="slide__inner">
+<div class="wrap">
+
+<div class="head rv"><em>03</em><h2>Technical Skills</h2><div class="rule"></div></div>
+<div class="skills">
+  <div class="sk rv"><h4>Languages</h4><div class="chips"><span class="chip">JavaScript</span><span class="chip">TypeScript</span><span class="chip">Python</span><span class="chip">C++</span><span class="chip">SQL</span><span class="chip">HLSL</span></div></div>
+  <div class="sk rv"><h4>Graphics</h4><div class="chips"><span class="chip">DirectX 12</span><span class="chip">DirectX 9</span><span class="chip">Shaders</span><span class="chip">Render Pipelines</span><span class="chip">GPU Profiling</span></div></div>
+  <div class="sk rv"><h4>Frontend</h4><div class="chips"><span class="chip">React.js</span><span class="chip">Next.js</span><span class="chip">Redux</span><span class="chip">Tailwind CSS</span><span class="chip">React Query</span></div></div>
+  <div class="sk rv"><h4>Backend</h4><div class="chips"><span class="chip">Node.js</span><span class="chip">Express.js</span><span class="chip">REST APIs</span><span class="chip">JWT</span><span class="chip">OAuth 2.0</span><span class="chip">Mongoose</span><span class="chip">WebSockets</span><span class="chip">Zod</span></div></div>
+  <div class="sk rv"><h4>Databases</h4><div class="chips"><span class="chip">MongoDB Atlas</span><span class="chip">MySQL</span></div></div>
+  <div class="sk rv"><h4>Generative AI</h4><div class="chips"><span class="chip">Gemini API</span><span class="chip">OpenAI API</span><span class="chip">LangChain</span><span class="chip">RAG</span><span class="chip">Prompt Engineering</span></div></div>
+  <div class="sk rv"><h4>Tools</h4><div class="chips"><span class="chip">Git</span><span class="chip">GitHub</span><span class="chip">Postman</span><span class="chip">VS Code</span><span class="chip">Vercel</span><span class="chip">Railway</span></div></div>
+  <div class="sk rv"><h4>Core CS</h4><div class="chips"><span class="chip">DSA</span><span class="chip">OOP</span><span class="chip">DBMS</span><span class="chip">System Design</span><span class="chip">Operating Systems</span><span class="chip">Networks</span></div></div>
+</div>
+
+</div>
+</div>
+</section>
+
+<!-- ============ 05 · Achievements ============ -->
+<section class="slide" id="awards" aria-label="Achievements">
+<div class="slide__inner">
+<div class="wrap">
+
+<div class="head rv"><em>04</em><h2>Achievements</h2><div class="rule"></div></div>
+<div class="aw">
+  <div class="awi rv"><b>900+</b><p>DSA problems solved across <strong><a href="https://leetcode.com/u/AMIR09/" target="_blank" rel="noopener">LeetCode</a></strong> (max rating <strong>1600</strong>) and <strong><a href="https://www.geeksforgeeks.org/profile/amirchoudharyb09" target="_blank" rel="noopener">GeeksforGeeks</a></strong>.</p></div>
+  <div class="awi rv"><b>Top 3</b><p><strong>Adobe Emerge Hackathon 2025</strong> — IIT Delhi, national-level competition.</p></div>
+  <div class="awi rv"><b>Top 6</b><p><strong>Hack For Impact 2025</strong> — IIIT Delhi.</p></div>
+  <div class="awi rv"><b>Top 10</b><p><strong>HackSprint Hackathon 2024</strong> — GDG, GL Bajaj.</p></div>
+</div>
+
+</div>
+</div>
+</section>
+
+<!-- ============ 06 · Certificates ============ -->
+<section class="slide" id="certs" aria-label="Certificates">
+<div class="slide__inner">
+<div class="wrap">
+
+<div class="head rv"><em>05</em><h2>Certifications</h2><div class="rule"></div></div>
+<div class="grid certs">
+  <a class="cert rv" href="https://drive.google.com/file/d/11qD4lFmx5ene2OOl3Qewo5CIj8wLhSnx/view" target="_blank" rel="noopener">
+    <span class="when">June 2024</span><h3>Google for Developers — Virtual Internship</h3><p>Google</p><span class="go">View certificate ↗</span>
+  </a>
+  <a class="cert rv" href="https://drive.google.com/file/d/1kfajoUAN52OaLUho9O7idFqfGcsFpfsi/view" target="_blank" rel="noopener">
+    <span class="when">May 2025</span><h3>CCNA / Python Certification</h3><p>Cisco</p><span class="go">View certificate ↗</span>
+  </a>
+  <a class="cert rv" href="https://drive.google.com/file/d/12Dv3mIIqi3RQFFh2FEq3JgQHNQ-UHbrZ/view" target="_blank" rel="noopener">
+    <span class="when">Jan 2025</span><h3>Web Development Competition</h3><p>See Caller</p><span class="go">View certificate ↗</span>
+  </a>
+  <a class="cert rv" href="https://drive.google.com/file/d/122bhjR_y1Xx8tllvPd7Rm457Bw8lD9z-/view" target="_blank" rel="noopener">
+    <span class="when">Nov 2024</span><h3>Coding Competition</h3><p>HackSprint, GDG GL Bajaj</p><span class="go">View certificate ↗</span>
+  </a>
+</div>
+
+</div>
+</div>
+</section>
+
+<!-- ============ 07 · Activity & AI ============ -->
+<section class="slide" id="activity" aria-label="Activity &amp; AI">
+<div class="slide__inner">
+<div class="wrap">
+
+<div class="head rv"><em>06</em><h2>GitHub Activity</h2><div class="rule"></div></div>
+<p class="rv sub">My code statistics and contribution visualizer</p>
+<div class="grid gh">
+  <div class="card rv tilt gh__card">
+    <h3>General Stats</h3>
+    <img src="https://github-profile-summary-cards.vercel.app/api/cards/stats?username=Amirchoudhary09&theme=github_dark&hide_logo=true&bg_color=05060a00&title_color=22d3ee&text_color=a8b0c2&icon_color=7c5cff&border_color=00000000" alt="Amir's GitHub stats card" width="400" height="200" loading="lazy" decoding="async" onerror="this.closest('.gh__card').classList.add('gh__card--off')">
+  </div>
+  <div class="card rv tilt gh__card">
+    <h3>Streak Count</h3>
+    <!-- streak-stats.demolab.com is the maintained host of github-readme-streak-stats (the herokuapp one is dead) -->
+    <img src="https://streak-stats.demolab.com/?user=Amirchoudhary09&theme=dracula&hide_border=true&background=05060a00&ring=7c5cff&fire=22d3ee&currStreakNum=eef1f8" alt="Amir's GitHub contribution streak" width="495" height="195" loading="lazy" decoding="async" onerror="this.closest('.gh__card').classList.add('gh__card--off')">
+  </div>
+  <div class="card rv tilt gh__card gh__card--wide">
+    <h3>Contributions Calendar</h3>
+    <div class="gh__cal">
+      <img src="https://ghchart.rshah.org/7c5cff/Amirchoudhary09" alt="Amir's GitHub contributions calendar for the last year" width="663" height="104" loading="lazy" decoding="async" onerror="this.closest('.gh__card').classList.add('gh__card--off')">
+    </div>
+  </div>
+</div>
+
+<div class="head rv gap"><em>07</em><h2>Try Amir.AI</h2><div class="rule"></div></div>
+<p class="rv sub">A little shell that knows this portfolio — ask it anything, or press the buttons.</p>
+
+<div class="terminal rv tilt" id="ai-terminal">
+  <div class="term-header">
+     <div class="dots" aria-hidden="true"><span class="dot red"></span><span class="dot yel"></span><span class="dot grn"></span></div>
+     <div class="term-title">amir-ai-shell v1.1.0 (bash)</div>
+     <div class="term-status">ONLINE</div>
+  </div>
+  <div class="term-body" id="ai-body">
+    <div class="term-line sys">[SYSTEM] Initialize Amir AI Engine... SUCCESS</div>
+    <div class="term-line sys">[SYSTEM] Load user profile: 'Amir Choudhary'... SUCCESS</div>
+    <div class="term-line info"><br>Welcome to the interactive portfolio helper!</div>
+    <div class="term-line info">Type <span class="cmd">help</span> to list commands, <span class="cmd">Tab</span> to autocomplete, <span class="cmd">↑</span> for history.</div>
+    <div class="quick-btns" id="ai-btns">
+      <button class="qb" data-cmd="about">About Me</button>
+      <button class="qb" data-cmd="skills">Tech Stack</button>
+      <button class="qb" data-cmd="projects">Projects</button>
+      <button class="qb" data-cmd="experience">Experience</button>
+      <button class="qb" data-cmd="hackathons">Hackathons</button>
+      <button class="qb" data-cmd="resume">Resume</button>
+      <button class="qb" data-cmd="contact">Contact</button>
+      <button class="qb" data-cmd="matrix">Matrix Rain</button>
+      <button class="qb" data-cmd="clear">Clear</button>
+    </div>
+    <div class="term-history" id="ai-history" role="log" aria-live="polite"></div>
+    <div class="term-input-line">
+       <label class="prompt" for="ai-input">visitor@amir-ai:~$</label>
+       <input type="text" id="ai-input" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="Type a command (e.g. help, projects, goto contact)…">
+    </div>
+  </div>
+</div>
+
+</div>
+</div>
+</section>
+
+<!-- ============ 08 · Contact ============ -->
+<section class="slide" id="contact" aria-label="Contact">
+<div class="slide__inner">
+<div class="wrap contact">
+
+<div class="contact-wrapper rv tilt">
+  <h2 class="contact-title">Get in Touch</h2>
+  <p class="contact-sub">Let's build something extraordinary together</p>
+
+  <div class="contact-grid">
+    <div class="contact-info-col">
+      <h3>Connect with Me</h3>
+      <p>Have an exciting project idea, an SDE opportunity, or want to talk low-level graphics and DirectX / WebGL pipelines? My inbox is always open — drop a message!</p>
+
+      <a href="mailto:amirchoudharyb03@gmail.com" class="c-block">
+        <span class="c-icon">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" aria-hidden="true"><path d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
+        </span>
+        <span class="c-details"><span>Email Me</span><strong>amirchoudharyb03@gmail.com</strong></span>
+      </a>
+
+      <!-- the number is only put on the page when someone asks for it (keeps it off scrapers) -->
+      <button type="button" class="c-block c-reveal" id="reveal-phone">
+        <span class="c-icon">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" aria-hidden="true"><path d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path></svg>
+        </span>
+        <span class="c-details"><span>Call Me</span><strong>Click to reveal number</strong></span>
+      </button>
+
+      <div class="c-block">
+        <span class="c-icon">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" aria-hidden="true"><path d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+        </span>
+        <span class="c-details"><span>Location</span><strong>Greater Noida, India</strong></span>
+      </div>
+
+      <a href="Amir-Choudhary-Resume.pdf" class="c-block" target="_blank" rel="noopener">
+        <span class="c-icon">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" aria-hidden="true"><path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+        </span>
+        <span class="c-details"><span>Résumé</span><strong>View / download PDF</strong></span>
+      </a>
+
+      <div class="c-socials">
+        <a href="https://linkedin.com/in/amirchoudhary09" target="_blank" rel="noopener" class="c-soc" aria-label="LinkedIn" title="LinkedIn"><svg fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.762 2.239 5 5 5h14c2.762 0 5-2.238 5-5v-14c0-2.761-2.239-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg></a>
+        <a href="https://github.com/Amirchoudhary09" target="_blank" rel="noopener" class="c-soc" aria-label="GitHub" title="GitHub"><svg fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg></a>
+        <a href="https://leetcode.com/u/AMIR09/" target="_blank" rel="noopener" class="c-soc" aria-label="LeetCode" title="LeetCode"><span class="txt">LC</span></a>
+        <a href="https://www.geeksforgeeks.org/profile/amirchoudharyb09" target="_blank" rel="noopener" class="c-soc" aria-label="GeeksforGeeks" title="GeeksforGeeks"><span class="txt">GfG</span></a>
+      </div>
+    </div>
+
+    <div class="contact-form-col">
+      <!-- action/method are the no-JS fallback; form.js takes over and posts via fetch -->
+      <form id="contact-form" action="https://formsubmit.co/amirchoudharyb03@gmail.com" method="POST">
+        <div class="f-row">
+          <label><span>Your Name</span><input type="text" name="name" placeholder="Enter name" autocomplete="name" required></label>
+          <label><span>Your Email</span><input type="email" name="email" placeholder="Enter email" autocomplete="email" required></label>
+        </div>
+        <label><span>Subject</span><input type="text" name="subject" placeholder="Collaboration proposal" required></label>
+        <label><span>Your Message</span><textarea name="message" rows="5" placeholder="Let's build something..." required></textarea></label>
+        <!-- honeypot: people never see it, bots fill it and get dropped -->
+        <label class="hp" aria-hidden="true"><span>Leave this empty</span><input type="text" name="_honey" tabindex="-1" autocomplete="off"></label>
+        <input type="hidden" name="_template" value="table">
+        <input type="hidden" name="_next" value="https://port-omega-rust.vercel.app/#contact">
+        <button type="submit" class="btn-send"><span class="btn-send__label">Send Message</span> <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path></svg></button>
+        <p class="form__status" role="status" aria-live="polite"></p>
+      </form>
+    </div>
+  </div>
+</div>
+
+<footer class="new-foot rv">
+  <div class="nf-left">
+    <span class="nf-brand">&lt;Amir.Choudhary/&gt;</span>
+    <div class="nf-sub">SDE @ Wasp3D | Building high-quality native &amp; full-stack architectures.</div>
+  </div>
+  <div class="nf-right">
+    <div class="nf-copy">© 2026 Amir Choudhary. All rights reserved.</div>
+    <div class="nf-icons">
+      <a href="https://github.com/Amirchoudhary09" target="_blank" rel="noopener" aria-label="GitHub" title="GitHub"><svg fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg></a>
+      <a href="https://linkedin.com/in/amirchoudhary09" target="_blank" rel="noopener" aria-label="LinkedIn" title="LinkedIn"><svg fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.762 2.239 5 5 5h14c2.762 0 5-2.238 5-5v-14c0-2.761-2.239-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg></a>
+      <a href="https://leetcode.com/u/AMIR09/" target="_blank" rel="noopener" aria-label="LeetCode" title="LeetCode"><span class="txt">LC</span></a>
+      <a href="https://www.geeksforgeeks.org/profile/amirchoudharyb09" target="_blank" rel="noopener" aria-label="GeeksforGeeks" title="GeeksforGeeks"><span class="txt">GfG</span></a>
+      <a href="mailto:amirchoudharyb03@gmail.com" aria-label="Email" title="Email"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" aria-hidden="true"><path d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg></a>
+    </div>
+  </div>
+</footer>
+
+</div>
+</div>
+</section>
+
+</main>
+
+<p class="boot-note">Opened straight from disk — for the full experience run <code>start.bat</code> (or <code>npx serve .</code>) and open the printed URL.</p>
 
 <script type="importmap">
 {

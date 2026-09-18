@@ -289,7 +289,7 @@
 .term-header .grn { background: #27c93f; }
 .term-title { color: var(--mut); letter-spacing: 0.05em; font-size: 11px; }
 .term-status { color: #27c93f; font-size: 11px; font-weight: 600; letter-spacing: 0.1em; animation: pulse 2s infinite; }
-.term-body { padding: 16px; height: 350px; overflow-y: auto; display: flex; flex-direction: column; scroll-behavior: smooth; }
+.term-body { padding: 16px; min-height: 350px; max-height: min(560px, 70vh); overflow-y: auto; display: flex; flex-direction: column; scroll-behavior: smooth; }
 .term-line { line-height: 1.6; margin-bottom: 6px; word-wrap: break-word; }
 .term-line.sys { color: var(--mut); }
 .term-line.info { color: #cfd6e6; }
@@ -347,4 +347,52 @@
 .nf-icons a:hover { color: var(--b); }
 .nf-icons svg { width: 18px; height: 18px; }
 @media(max-width: 700px) { .new-foot { flex-direction: column; text-align: center; } .nf-right { text-align: center; } .nf-icons { justify-content: center; } }
+
+/* contact: phone reveal button, text badges, honeypot, form status */
+button.c-block{width:100%;font:inherit;text-align:left;cursor:pointer;color:inherit}
+.c-soc .txt,.nf-icons .txt{font-family:var(--mono);font-size:11px;font-weight:600;letter-spacing:.02em}
+.nf-icons .txt{font-size:12px}
+.hp{position:absolute !important;left:-9999px;width:1px;height:1px;overflow:hidden;opacity:0}
+.btn-send__label{display:inline;font-size:inherit;color:inherit;margin:0;font-weight:inherit}
+.btn-send[disabled]{opacity:.7;cursor:progress}
+.btn-send.ok{background:#27c93f}
+.form__status{min-height:18px;margin-top:10px;font-family:var(--mono);font-size:12px;color:var(--mut)}
+.form__status.ok{color:#27c93f}
+.form__status.err{color:var(--c)}
+.form__status a{color:var(--b)}
+.contact-form-col .bad{border-color:var(--c) !important;box-shadow:0 0 0 3px rgba(255,107,157,.14)}
+
+/* ===== activity: GitHub cards ===== */
+.sub{color:var(--mut);margin:-30px 0 40px;font-weight:300}
+.head.gap{margin-top:80px}
+.gh{grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:24px}
+.gh__card{padding:20px;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.gh__card h3{margin-bottom:15px;font-size:1rem;color:var(--b)}
+.gh__card img{width:100%;max-width:400px;height:auto;border-radius:8px;display:block}
+.gh__card--wide{grid-column:1 / -1;padding:24px;text-align:center;overflow-x:auto}
+.gh__cal{min-width:600px;padding:10px;background:rgba(0,0,0,.2);border-radius:8px;border:1px solid var(--line)}
+.gh__cal img{max-width:none}
+.gh__card--off{display:none}
+
+/* ===== terminal extras: links, multi-line replies, matrix rain ===== */
+.term-body{position:relative}
+.term-line.ai-msg{white-space:pre-wrap}
+.term-line a{color:var(--b);text-decoration:underline;text-underline-offset:2px}
+.term-input-line .prompt{cursor:text}
+.matrix{position:absolute;inset:0;z-index:5;pointer-events:none}
+
+/* ===== project card with the live WebGL water ===== */
+.card__demo{background:#05060a}
+.card__demo canvas{display:block;width:100%;aspect-ratio:16/9;touch-action:none}
+.card__demo.nogl{aspect-ratio:16/9;display:grid;place-items:center;
+  background:radial-gradient(60% 80% at 50% 100%,rgba(34,211,238,.25),transparent),#05060a}
+.card__demo.nogl canvas{display:none}
+.demo-tag{position:absolute;left:14px;bottom:12px;z-index:2;display:inline-flex;align-items:center;gap:7px;
+  padding:5px 11px;border-radius:999px;border:1px solid rgba(34,211,238,.3);background:rgba(5,6,10,.72);
+  font-family:var(--mono);font-size:10.5px;color:var(--b);letter-spacing:.04em;pointer-events:none}
+.demo-tag i{width:6px;height:6px;border-radius:50%;background:var(--b);box-shadow:0 0 0 0 var(--b);animation:pulse 2s infinite}
+.demo-tag::after{content:' — move your cursor'}
+@media(hover:none){.demo-tag::after{content:' — tap the water'}}
+.links .pill{font-family:var(--mono);font-size:11.5px;color:var(--mut);border:1px dashed var(--line);
+  padding:7px 14px;border-radius:999px}
 

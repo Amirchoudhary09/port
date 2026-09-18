@@ -1,83 +1,115 @@
 /**
- * Contact form using FormSubmit.co for direct email delivery.
+ * Contact slide: the form (FormSubmit.co over fetch, plain POST as the no-JS
+ * fallback) and the click-to-reveal phone number.
  */
-export function initForm() {
+const TO    = 'amirchoudharyb03@gmail.com';
+const PHONE = { text: '+91 94571 14241', href: 'tel:+919457114241' };
+
+export function initContact() {
+  initPhoneReveal();
+  initForm();
+}
+
+/** the number is never in the HTML — it's swapped in when someone asks for it */
+function initPhoneReveal() {
+  const btn = document.getElementById('reveal-phone');
+  if (!btn) return;
+  btn.addEventListener('click', () => {
+    const a = document.createElement('a');
+    a.className = 'c-block';
+    a.href = PHONE.href;
+    a.innerHTML = btn.innerHTML;                  // same icon + layout
+    a.querySelector('.c-details strong').textContent = PHONE.text;
+    btn.replaceWith(a);
+    a.focus();
+  }, { once: true });
+}
+
+function initForm() {
   const form = document.getElementById('contact-form');
   if (!form) return;
+  form.noValidate = true;                         // the messages below replace the browser bubbles
 
-  const err = form.querySelector('.form__err');
-  const btn = form.querySelector('button[type=submit]');
-  const TO = 'amirchoudharyb03@gmail.com';
+  const status = form.querySelector('.form__status');
+  const btn    = form.querySelector('button[type=submit]');
+  const label  = btn.querySelector('.btn-send__label');
+  const idle   = label.textContent;
 
-  const valid = {
-    name: v => v.trim().length >= 2 || 'Please add your name.',
-    email: v => /^[^@\s]+@[^@\s]+\.[^@\s]{2,}$/.test(v.trim()) || 'That email address looks off.',
-    message: v => v.trim().length >= 10 || 'Tell me a little more — 10 characters minimum.'
+  const rules = {
+    name:    v => v.trim().length >= 2  || 'Please add your name.',
+    email:   v => /^[^@\s]+@[^@\s]+\.[^@\s]{2,}$/.test(v.trim()) || 'That email address looks off.',
+    subject: v => v.trim().length >= 3  || 'Give the message a subject.',
+    message: v => v.trim().length >= 10 || 'Tell me a little more — 10 characters minimum.',
   };
+
+  function say(msg, kind = '') {
+    status.textContent = msg;
+    status.className = 'form__status' + (kind && ' ' + kind);
+  }
 
   form.addEventListener('input', e => {
     e.target.classList.remove('bad');
-    err.textContent = '';
-    err.style.color = 'var(--c)';
+    if (status.classList.contains('err')) say('');
   });
 
+  let busy = false;
   form.addEventListener('submit', async e => {
     e.preventDefault();
-    const data = {};
+    if (busy) return;
 
-    for (const key of Object.keys(valid)) {
+    const data = {};
+    for (const key in rules) {
       const field = form.elements[key];
-      if (!field) continue;
-      data[key] = field.value;
-      const check = valid[key](field.value);
+      const check = rules[key](field.value);
       if (check !== true) {
         field.classList.add('bad');
         field.focus();
-        err.textContent = check;
+        say(check, 'err');
         return;
       }
+      data[key] = field.value.trim();
     }
-    
-    // Also include subject if present
-    const subjectField = form.elements['subject'];
-    if (subjectField) data['subject'] = subjectField.value;
 
-    const originalBtnHTML = btn.innerHTML;
-    btn.textContent = 'Sending...';
+    // honeypot filled in → a bot; pretend it worked and drop it
+    if (form.elements._honey && form.elements._honey.value) {
+      form.reset();
+      say("Message sent — I'll get back to you soon.", 'ok');
+      return;
+    }
+
+    busy = true;
     btn.disabled = true;
+    label.textContent = 'Sending…';
+    say('');
 
     try {
-      const response = await fetch(`https://formsubmit.co/ajax/${TO}`, {
+      const r = await fetch(`https://formsubmit.co/ajax/${TO}`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json'
-        },
-        body: JSON.stringify({
-          name: data.name.trim(),
-          email: data.email.trim(),
-          subject: data.subject ? data.subject.trim() : `Portfolio enquiry from ${data.name.trim()}`,
-          message: data.message.trim()
-        })
+        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+        body: JSON.stringify({ ...data, _subject: `Portfolio: ${data.subject}`, _template: 'table' }),
       });
+      const j = await r.json().catch(() => ({}));
+      if (!r.ok || String(j.success) === 'false') throw new Error(j.message || `HTTP ${r.status}`);
 
-      if (response.ok) {
-        form.reset();
-        err.style.color = 'var(--b)';
-        err.textContent = 'Message sent successfully!';
-      } else {
-        throw new Error('Server returned an error');
-      }
-    } catch (error) {
-      err.style.color = 'var(--c)';
-      err.textContent = 'Failed to send message. Please try again.';
+      form.reset();
+      label.textContent = 'Sent ✓';
+      btn.classList.add('ok');
+      say("Message sent — I'll get back to you soon.", 'ok');
+    } catch (err) {
+      // never leave someone stuck: hand them a ready-made email instead
+      const body = `${data.message}\n\n— ${data.name} (${data.email})`;
+      say(`Couldn't send right now (${err.message}). `, 'err');
+      const a = document.createElement('a');
+      a.href = `mailto:${TO}?subject=${encodeURIComponent(data.subject)}&body=${encodeURIComponent(body)}`;
+      a.textContent = 'Email me directly instead →';
+      status.append(a);
     } finally {
-      setTimeout(() => { 
-        btn.innerHTML = originalBtnHTML; 
-        btn.disabled = false; 
-        if (err.textContent === 'Message sent successfully!') err.textContent = '';
+      busy = false;
+      setTimeout(() => {
+        btn.disabled = false;
+        btn.classList.remove('ok');
+        label.textContent = idle;
       }, 3000);
     }
   });
 }
-

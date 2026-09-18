@@ -5,7 +5,7 @@ export function mountNav(onJump) {
   const nav = document.getElementById('nav');
 
   nav.innerHTML = SECTIONS.map((s, i) => `
-    <a href="#${s.id}" aria-label="${s.label}" data-index="${i}">
+    <a href="#${s.id}" aria-label="${s.label}" title="${s.label}" data-index="${i}">
       <svg viewBox="0 0 24 24" aria-hidden="true">${ICONS[s.icon] || ''}</svg>
       <span>${s.label}</span>
     </a>`).join('') +
@@ -22,7 +22,10 @@ export function mountNav(onJump) {
   });
 
   return function setActive(index) {
-    links.forEach((a, i) => a.classList.toggle('on', i === index));
+    links.forEach((a, i) => {
+      a.classList.toggle('on', i === index);
+      if (i === index) a.setAttribute('aria-current', 'true'); else a.removeAttribute('aria-current');
+    });
     if (counter) counter.textContent = String(index + 1).padStart(2, '0');
     // keep the active pill visible when the nav has to scroll on narrow screens
     const a = links[index];

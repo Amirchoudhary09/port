@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<!--
+  Source of img/og.jpg — the 1200×630 card LinkedIn / WhatsApp / X show when the
+  site is shared. Regenerate with tools/make-assets.ps1 after changing it.
+-->
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;600;800&family=JetBrains+Mono:wght@400;600&display=block" rel="stylesheet">
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{width:1200px;height:630px;overflow:hidden;background:#05060a;color:#eef1f8;font-family:'Sora',system-ui,sans-serif}
+  .card{position:relative;width:1200px;height:630px;overflow:hidden;isolation:isolate}
+  .grid{position:absolute;inset:0;opacity:.55;
+    background-image:linear-gradient(rgba(255,255,255,.07) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.07) 1px,transparent 1px);
+    background-size:64px 64px;
+    -webkit-mask-image:radial-gradient(75% 70% at 55% 40%,#000,transparent 90%)}
+  .orb{position:absolute;border-radius:50%;filter:blur(90px);mix-blend-mode:screen}
+  .o1{width:620px;height:620px;left:-180px;top:-260px;background:radial-gradient(circle,#7c5cff,transparent 66%);opacity:.7}
+  .o2{width:560px;height:560px;right:-120px;top:-160px;background:radial-gradient(circle,#22d3ee,transparent 66%);opacity:.5}
+  .o3{width:520px;height:520px;left:420px;bottom:-320px;background:radial-gradient(circle,#ff6b9d,transparent 66%);opacity:.42}
+  .left{position:absolute;left:76px;top:0;bottom:0;width:720px;display:flex;flex-direction:column;justify-content:center}
+  .brand{font-family:'JetBrains Mono',monospace;font-weight:600;font-size:20px;color:#22d3ee;letter-spacing:-.01em}
+  h1{margin-top:22px;font-size:104px;font-weight:800;line-height:.92;letter-spacing:-.045em}
+  h1 span{display:block}
+  .grad{background:linear-gradient(105deg,#7c5cff,#22d3ee 45%,#ff6b9d);-webkit-background-clip:text;background-clip:text;color:transparent;padding-bottom:.08em}
+  .role{margin-top:26px;font-family:'JetBrains Mono',monospace;font-size:24px;color:#eef1f8;font-weight:400}
+  .role b{color:#22d3ee;font-weight:600}
+  .chips{display:flex;gap:10px;margin-top:26px}
+  .chip{font-size:16px;padding:8px 16px;border-radius:999px;border:1px solid rgba(255,255,255,.14);color:#c9d1e3;background:rgba(255,255,255,.04)}
+  .url{position:absolute;left:76px;bottom:44px;font-family:'JetBrains Mono',monospace;font-size:17px;color:#8b93a7;letter-spacing:.02em}
+  .photo{position:absolute;right:84px;top:50%;transform:translateY(-50%);width:352px;height:352px;border-radius:40px;padding:3px;
+    background:linear-gradient(135deg,#7c5cff,#22d3ee,#ff6b9d);box-shadow:0 40px 90px rgba(124,92,255,.35),0 0 0 1px rgba(255,255,255,.06)}
+  .photo img{display:block;width:100%;height:100%;border-radius:37px;object-fit:cover;background:#05060a}
+  .tag{position:absolute;right:84px;bottom:44px;font-family:'JetBrains Mono',monospace;font-size:14px;color:#22d3ee;
+    border:1px solid rgba(34,211,238,.35);background:rgba(34,211,238,.08);padding:7px 14px;border-radius:999px;display:flex;align-items:center;gap:8px}
+  .tag i{width:7px;height:7px;border-radius:50%;background:#22d3ee;box-shadow:0 0 10px #22d3ee}
+</style>
+</head>
+<body>
+<div class="card">
+  <div class="orb o1"></div><div class="orb o2"></div><div class="orb o3"></div>
+  <div class="grid"></div>
+
+  <div class="left">
+    <div class="brand">&lt;Amir.Choudhary/&gt;</div>
+    <h1><span>Amir</span><span class="grad">Choudhary</span></h1>
+    <div class="role">Software Development Engineer <b>@ Wasp3D</b></div>
+    <div class="chips">
+      <span class="chip">C++ · DirectX 12</span>
+      <span class="chip">HLSL shaders</span>
+      <span class="chip">MERN</span>
+      <span class="chip">900+ DSA</span>
+    </div>
+  </div>
+
+  <div class="photo"><img src="../img/profile.webp" alt=""></div>
+  <div class="url">port-omega-rust.vercel.app</div>
+  <div class="tag"><i></i>Noida, India</div>
+</div>
+</body>
+</html>

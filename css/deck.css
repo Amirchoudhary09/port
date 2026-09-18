@@ -59,3 +59,8 @@ html {
 @media(max-width:820px){
   .slide__inner{padding:92px 0 72px}
 }
+
+/* no JS: same flat layout as reduced motion */
+html.no-js{scroll-snap-type:none}
+.no-js .slide{position:relative;height:auto;overflow:visible;scroll-snap-align:none}
+.no-js .slide__inner{max-height:none;overflow:visible;transform:none;opacity:1;filter:none;padding:80px 0}
