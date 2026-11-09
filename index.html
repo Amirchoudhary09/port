@@ -63,7 +63,7 @@
 :root{
   --bg:#070912; --bg2:#0b0e1c; --panel:#0e1222; --panel2:#131832;
   --line:#232a4a; --line2:#2f3a6a;
-  --tx:#e8ecf7; --mut:#8b94ad; --dim:#5b6480;
+  --tx:#e8ecf7; --mut:#8b94ad; --dim:#727d9e;
   --cyan:#19e3ff; --mag:#ff3d8a; --lime:#9cff3d; --gold:#ffc83d; --violet:#8f7bff;
   --cyan-dim:rgba(25,227,255,.14); --mag-dim:rgba(255,61,138,.14); --lime-dim:rgba(156,255,61,.14);
   --gold-dim:rgba(255,200,61,.14); --violet-dim:rgba(143,123,255,.16);
@@ -113,7 +113,7 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
 /* ---------- screens ---------- */
 main{position:relative;z-index:2}
 .wrap{max-width:1240px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
-.screen{padding-block:72px}
+.screen{padding-block:72px;scroll-margin-top:56px}
 .screen + .screen{border-top:1px dashed var(--line)}
 .shead{display:flex;align-items:flex-end;gap:16px;margin-bottom:36px;flex-wrap:wrap}
 .shead .tag{font-family:var(--mono);font-size:12px;color:var(--mag);letter-spacing:2px;text-transform:uppercase;border:1px solid var(--mag);padding:3px 8px;background:var(--mag-dim)}
@@ -408,7 +408,7 @@ form .bad{border-color:var(--mag);box-shadow:0 0 0 3px var(--mag-dim)}
   <div class="wrap title">
     <div>
       <div class="press" aria-hidden="true">▶ PRESS START · NOIDA, INDIA</div>
-      <h1 class="hero-name">Amir<br><span class="alt">Choudhary</span></h1>
+      <h1 class="hero-name">Amir <br><span class="alt">Choudhary</span></h1>
       <div class="class"><i></i> Class: Graphics Engineer · Lv. 2026</div>
       <p class="typed" id="typed">Software Development Engineer @ Wasp3D</p>
       <p class="lede">I build things that have to be fast: real-time rendering pipelines in C++ / DirectX 12 at Wasp3D, and scalable MERN applications with clean APIs, secure auth and AI integrations.</p>

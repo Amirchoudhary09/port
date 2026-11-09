@@ -16,6 +16,7 @@ the co-op (contact) screen. Everything is vanilla JS + canvas; it opens straight
 
 ```
 index.html          meta / link-preview tags, all styles, all markup (one <section class="screen"> per screen), all scripts
+404.html            the "GAME OVER" screen Vercel serves for unknown paths
 img/                WebP images, PNG icons, og.jpg (the share card)
 tools/
   og-card.html      source of img/og.jpg
@@ -47,6 +48,7 @@ The public key and topic live at the top of the `contact()` block in `index.html
 ## Images, icons, share card
 
 - Photos go in `img/` as WebP (about 50 KB each at 1200 px wide).
+- `favicon.svg` is a 16×16 pixel-art "A"; `tools/og-card.html` is the arcade share card.
 - After changing `tools/og-card.html` or `favicon.svg`, run
   `powershell -ExecutionPolicy Bypass -File tools/make-assets.ps1` to rebuild `img/og.jpg` and the PNG icons.
 
