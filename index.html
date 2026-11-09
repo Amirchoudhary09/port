@@ -102,6 +102,7 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
 .brand b{color:var(--mag)}
 .hud nav{display:flex;gap:4px;margin-left:auto;overflow-x:auto;scrollbar-width:none;min-width:0}
 .hud nav::-webkit-scrollbar{display:none}
+@media (max-width:1100px){.hud nav{-webkit-mask-image:linear-gradient(90deg,#000 calc(100% - 36px),transparent);mask-image:linear-gradient(90deg,#000 calc(100% - 36px),transparent)}.hud nav.end{-webkit-mask-image:none;mask-image:none}}
 .hud nav a{font-family:var(--mono);font-size:13px;letter-spacing:.5px;color:var(--mut);padding:6px 10px;border:1px solid transparent;white-space:nowrap;text-transform:uppercase}
 .hud nav a:hover{color:var(--tx);text-decoration:none}
 .hud nav a.on{color:var(--lime);border-color:var(--line2);background:var(--panel)}
@@ -396,7 +397,7 @@ form .bad{border-color:var(--mag);box-shadow:0 0 0 3px var(--mag-dim)}
       <a href="#console"><span>07</span>Console</a>
       <a href="#coop"><span>08</span>Co-op</a>
     </nav>
-    <div class="lvl" id="lvl">XP 0%</div>
+    <div class="lvl" id="lvl">LV 00 · XP 0%</div>
   </div>
   <div class="xp" aria-hidden="true"><i id="xpbar"></i></div>
 </header>
@@ -769,7 +770,7 @@ form .bad{border-color:var(--mag);box-shadow:0 0 0 3px var(--mag-dim)}
     <div class="coop">
       <div class="panel cinfo rv">
         <h3>Connect with me</h3>
-        <p>Based in Greater Noida, India. Open to SDE roles in graphics, engine and full-stack work.</p>
+        <p>Based in Greater Noida, India. Open to SDE roles in graphics, full-stack and Gen-AI work.</p>
         <button type="button" class="cb" data-copy="amirchoudharyb03@gmail.com">
           <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="14" rx="2.5"/><path d="m3.8 6.6 8.2 6 8.2-6"/></svg></span>
           <span><span>Email</span><strong>amirchoudharyb03@gmail.com</strong></span>
@@ -856,14 +857,18 @@ document.documentElement.classList.add('js');
 })();
 
 /* ---------- XP bar + nav active ---------- */
-const xp=$('#xpbar'),lvl=$('#lvl'),navLinks=$$('#nav a');
+const xp=$('#xpbar'),lvl=$('#lvl'),navEl=$('#nav'),navLinks=$$('#nav a');let lastCur=-2;
 const secs=navLinks.map(a=>$(a.getAttribute('href')));
 function onScroll(){
   const max=document.documentElement.scrollHeight-innerHeight;const p=max>0?Math.min(1,scrollY/max):0;
-  xp.style.width=(p*100).toFixed(1)+'%';lvl.textContent='XP '+Math.round(p*100)+'%';
+  xp.style.width=(p*100).toFixed(1)+'%';
   let cur=-1;secs.forEach((s,i)=>{if(s&&s.getBoundingClientRect().top<innerHeight*.45)cur=i;});
   navLinks.forEach((a,i)=>a.classList.toggle('on',i===cur));
+  lvl.textContent='LV '+String(cur+1).padStart(2,'0')+' · XP '+Math.round(p*100)+'%';
+  if(cur!==lastCur){lastCur=cur;const a=navLinks[cur];if(a&&navEl.scrollWidth>navEl.clientWidth){const ar=a.getBoundingClientRect(),nr=navEl.getBoundingClientRect();navEl.scrollTo({left:navEl.scrollLeft+(ar.left-nr.left)-nr.width/2+ar.width/2,behavior:reduced?'auto':'smooth'});}}
 }
+const navEnd=()=>navEl.classList.toggle('end',navEl.scrollLeft+navEl.clientWidth>=navEl.scrollWidth-2);
+navEl.addEventListener('scroll',navEnd,{passive:true});addEventListener('resize',navEnd);navEnd();
 addEventListener('scroll',onScroll,{passive:true});onScroll();
 
 /* ---------- typed strap-line ---------- */
