@@ -1,44 +1,21 @@
-# Amir Choudhary — Portfolio
+# Amir Choudhary — Portfolio (arcade edition)
 
 Static site, no framework, no build step. Live at https://port-omega-rust.vercel.app/ (deploys from `main`).
 
+The whole page is one file, `index.html`, styled like an arcade cabinet: a HUD with an XP bar
+that fills as you scroll, then one "screen" per section — title screen, player stats, quest log
+(experience), level select (projects), skill inventory, trophies, badges, the Amir.AI console and
+the co-op (contact) screen. Everything is vanilla JS + canvas; it opens straight from disk.
+
 ## Run locally
 
-The site uses ES modules, so it needs a local server — opening `index.html` from
-disk shows a flat, script-free version of the page with a note.
-
-- Double-click `start.bat` → http://localhost:5173
-  (falls back to `serve.ps1`, a dependency-free PowerShell static server — no Node, no Python, no admin rights)
-- or in VS Code: right-click `index.html` → **Open with Live Server**
+- Double-click `index.html`, or
+- `start.bat` → http://localhost:5173 (falls back to `serve.ps1`, a dependency-free PowerShell static server)
 
 ## Layout
 
 ```
-index.html          everything visible: meta / link-preview tags, and one <section class="slide"> per slide
-css/
-  base.css          reset, design tokens, buttons, section headings, skip link, no-JS fallback
-  effects.css       aurora orbs, grain, spotlight, custom cursor, canvas
-  nav.css           top icon nav pill + active state + slide counter
-  deck.css          the sticky slide deck and the swap-upward transition
-  hero.css          first slide only
-  scene.css         the hero animation: typing, electric blast, welcome line
-  components.css    stats, marquee, timeline, cards, chips, awards, certs, GitHub cards, terminal, contact
-js/
-  config.js         SECTIONS list + icon paths + typed lines  <- the nav is built from this
-  loader.js         collects the slides from index.html in config order
-  nav.js            builds the top icon nav from config
-  deck.js           slide progress (--p), active slide, keyboard paging
-  smoothscroll.js   eased wheel scrolling that settles onto the nearest slide
-  typing.js         hero typewriter
-  reveal.js         .rv reveals + stat counters
-  cursor.js         custom cursor + shared pointer position
-  wireframe.js      three.js floating wireframe shapes (desktop only, loaded on demand)
-  interactions.js   card tilt + magnetic buttons
-  form.js           contact form (FormSubmit.co) + click-to-reveal phone
-  particles.js      flow-field constellation canvas
-  terminal.js       the "Amir.AI" shell: commands, history, tab completion, matrix rain
-  water.js          WebGL water sketch on the graphics project card
-  main.js           entry point
+index.html          meta / link-preview tags, all styles, all markup (one <section class="screen"> per screen), all scripts
 img/                WebP images, PNG icons, og.jpg (the share card)
 tools/
   og-card.html      source of img/og.jpg
@@ -46,70 +23,34 @@ tools/
 Amir-Choudhary-Resume.pdf   also reachable as /resume (rewrite in vercel.json)
 ```
 
+Inside `index.html`, top to bottom:
+
+- `<style>` — design tokens in `:root` (arcade palette, pixel / UI / mono fonts), then one block per screen.
+- `<main>` — the screens, each marked `<!-- ===== 0N · NAME ===== -->`. The HUD nav at the top links to them by `id`.
+- `<script>` — background grid, XP bar + active nav, typing line, reveals + counters, card tilt,
+  the LV 03 water canvas, the Amir.AI shell (`C` holds the commands), contact (phone reveal +
+  encrypted drop-box form), Konami code.
+
 ## Editing content
 
-Everything a visitor reads is in `index.html`, one commented block per slide
-(`<!-- ==== 02 · Projects ==== -->`). Keep the section `id`s in step with
-`js/config.js` — `loader.js` matches them by id and warns in the console if one
-is missing.
-
-The terminal's answers live in `js/terminal.js` (`COMMANDS`); keep them in sync
-when the experience or project list changes.
-
-## Add a slide
-
-1. Add a `<section class="slide" id="my-thing" aria-label="My Thing">` block to `index.html`
-   (copy an existing one — `slide__inner` → `wrap` → content).
-2. Add an entry to `SECTIONS` in `js/config.js` — `id`, `label`, `icon`.
-3. If you want a new icon, add its SVG paths to `ICONS` in the same file.
-
-Nav icon, slide, counter and keyboard paging all follow automatically.
-
-## Images, icons, share card
-
-- Photos go in `img/` as WebP (about 50 KB each at 1200 px wide). Any browser can
-  convert: open the image, draw it on a `<canvas>`, `toDataURL('image/webp', .8)` —
-  or use Squoosh.
-- After changing `tools/og-card.html` or `favicon.svg`, run
-  `powershell -ExecutionPolicy Bypass -File tools/make-assets.ps1` to rebuild
-  `img/og.jpg` and the PNG icons.
-
-## Moving to a custom domain
-
-Search-and-replace `port-omega-rust.vercel.app` in `index.html` (canonical +
-Open Graph tags + the form's `_next`), `robots.txt`, `sitemap.xml` and
-`tools/og-card.html`, then rerun `make-assets.ps1`.
-
-## The scroll animation
-
-Every slide is `position: sticky; top: 0; height: 100svh`, so the next slide
-physically rises over the current one. `js/deck.js` measures how far the next
-slide has covered the current one and writes it to `--p` (0 → 1); `deck.css`
-uses that to scale, fade and blur the outgoing slide.
-
-`js/smoothscroll.js` handles the motion: one wheel nudge = one slide. The
-gesture needs no travel distance — the smallest flick pages immediately and an
-eased tween carries the scroll there, so it always lands on a slide. Slides with
-tall content scroll internally first and only page once that content runs out.
-Scrollbar drags, arrow keys, PageUp/PageDown, Home/End and touch momentum all
-still work; `prefers-reduced-motion` (and no-JS) turn the whole thing back into
-a plain long page.
-
-One trap worth knowing: the slides are `position: sticky`, so a pinned slide
-reports the current scroll position from `offsetTop` rather than its place in
-the flow. Target positions are therefore measured as `deckTop + index *
-slideHeight` — using `offsetTop` silently breaks paging backwards.
+- Text, links and images: edit the matching screen in `index.html`.
+- Shell answers: the `C` object inside the `shell()` block. Keep it in sync when projects or experience change.
+- Add a screen: copy a `<section class="screen" id="…">` block, give it an `id`, and add one `<a href="#id">` to the `#nav` list in the HUD. The XP bar and active state follow automatically.
 
 ## Contact form
 
-No third-party form service and nothing to activate. `js/form.js` encrypts the
-message in the browser (AES-256-GCM, key wrapped with the RSA public key in the
-file) and posts the envelope to a random ntfy.sh topic — a public drop box that
-only ever holds ciphertext. The private repo `Amirchoudhary09/contact-inbox`
-runs a GitHub Actions job twice an hour that decrypts new envelopes with the
-matching `key.pem` and opens one issue per message; GitHub's notification
-email for that issue is the delivery. If the drop fails, the visitor's own mail
-app opens with the message instead. A honeypot field drops bots.
+Messages are encrypted in the browser (AES-256-GCM, key wrapped with RSA-OAEP) and dropped on an
+ntfy.sh topic that only ever holds ciphertext; a GitHub Actions job in the private contact-inbox repo
+decrypts them and files each as an issue. If the drop fails the visitor's mail app opens with the message.
+The public key and topic live at the top of the `contact()` block in `index.html` — regenerate both together.
 
-Rotating the key: generate a new pair in `contact-inbox` (see its README) and
-paste the new public key into `PUBLIC_KEY` here.
+## Images, icons, share card
+
+- Photos go in `img/` as WebP (about 50 KB each at 1200 px wide).
+- After changing `tools/og-card.html` or `favicon.svg`, run
+  `powershell -ExecutionPolicy Bypass -File tools/make-assets.ps1` to rebuild `img/og.jpg` and the PNG icons.
+
+## Moving to a custom domain
+
+Search-and-replace `port-omega-rust.vercel.app` in `index.html` (canonical + Open Graph tags),
+`robots.txt` and `sitemap.xml`.
