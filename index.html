@@ -335,7 +335,8 @@ form input:focus,form textarea:focus{border-color:var(--cyan);box-shadow:0 0 0 3
 form .bad{border-color:var(--mag);box-shadow:0 0 0 3px var(--mag-dim)}
 .form__copy{display:block;margin-top:8px;font-family:var(--mono);font-size:12px;color:var(--gold);text-decoration:underline}
 .foot{margin-top:60px;padding-top:28px;border-top:1px solid var(--line);display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;font-family:var(--mono);font-size:12px;color:var(--dim);letter-spacing:.5px}
-.foot b{color:var(--cyan);font-family:var(--pixel);font-size:9px}
+.foot__brand{display:inline-flex;align-items:center;gap:10px;color:var(--mut)}
+.logo--sm{width:26px;height:26px}
 
 /* ---------- reveal + motion ---------- */
 .rv{opacity:1;transform:none;transition:opacity .7s var(--ease),transform .7s var(--ease)}
@@ -811,8 +812,7 @@ form .bad{border-color:var(--mag);box-shadow:0 0 0 3px var(--mag-dim)}
     </div>
 
     <footer class="foot">
-      <span><b>&lt;Amir.exe/&gt;</b> · © 2026 Amir Choudhary</span>
-      <span>Hand-built with vanilla JS and canvas. No frameworks. Konami code unlocks god mode.</span>
+      <span class="foot__brand"><svg class="logo logo--sm" viewBox="0 0 16 16" width="26" height="26" shape-rendering="crispEdges" aria-hidden="true"><rect width="16" height="16" rx="3" fill="#070912"/><rect x=".5" y=".5" width="15" height="15" rx="2.5" fill="none" stroke="#2f3a6a"/><path transform="translate(1 1)" fill="#ff3d8a" d="M6 4h3v1H6zM5 5h1v1H5zM9 5h1v1H9zM4 6h1v2H4zM10 6h1v2h-1zM4 8h7v1H4zM4 9h1v3H4zM10 9h1v3h-1z"/><path fill="#19e3ff" d="M6 4h3v1H6zM5 5h1v1H5zM9 5h1v1H9zM4 6h1v2H4zM10 6h1v2h-1zM4 8h7v1H4zM4 9h1v3H4zM10 9h1v3h-1z"/></svg> © 2026 Amir Choudhary</span>
       <a href="#start">▲ Back to title</a>
     </footer>
   </div>
