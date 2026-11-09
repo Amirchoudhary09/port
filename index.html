@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" class="no-js">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -7,7 +7,7 @@
 <meta name="description" content="Amir Choudhary — Software Development Engineer at Wasp3D. Real-time graphics in C++ / DirectX 12 / HLSL, full-stack MERN apps and AI integrations. Projects, experience, résumé and contact.">
 <meta name="author" content="Amir Choudhary">
 <meta name="color-scheme" content="dark">
-<meta name="theme-color" content="#05060a">
+<meta name="theme-color" content="#070912">
 <link rel="canonical" href="https://port-omega-rust.vercel.app/">
 
 <!-- link previews: LinkedIn, WhatsApp, X, Slack, Discord… -->
@@ -32,35 +32,6 @@
 <link rel="apple-touch-icon" href="img/apple-touch-icon.png">
 <link rel="manifest" href="site.webmanifest">
 
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;600;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
-
-<!-- styles, one file per concern -->
-<link rel="stylesheet" href="css/base.css">
-<link rel="stylesheet" href="css/effects.css">
-<link rel="stylesheet" href="css/nav.css">
-<link rel="stylesheet" href="css/deck.css">
-<link rel="stylesheet" href="css/hero.css">
-<link rel="stylesheet" href="css/scene.css">
-<link rel="stylesheet" href="css/components.css">
-
-<!-- warm the module graph so main.js doesn't discover its imports one hop at a time -->
-<link rel="modulepreload" href="js/main.js">
-<link rel="modulepreload" href="js/config.js">
-<link rel="modulepreload" href="js/loader.js">
-<link rel="modulepreload" href="js/nav.js">
-<link rel="modulepreload" href="js/deck.js">
-<link rel="modulepreload" href="js/smoothscroll.js">
-<link rel="modulepreload" href="js/typing.js">
-<link rel="modulepreload" href="js/reveal.js">
-<link rel="modulepreload" href="js/cursor.js">
-<link rel="modulepreload" href="js/interactions.js">
-<link rel="modulepreload" href="js/form.js">
-<link rel="modulepreload" href="js/particles.js">
-<link rel="modulepreload" href="js/terminal.js">
-<link rel="modulepreload" href="js/water.js">
-
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -82,596 +53,1032 @@
   "knowsAbout": ["C++", "DirectX 12", "HLSL", "Real-time rendering", "React", "Node.js", "MongoDB", "TypeScript", "Python", "Data structures and algorithms"]
 }
 </script>
-<script>
-  // flat page when JS is off, or when the file is opened straight from disk (modules can't load over file://)
-  var h = document.documentElement;
-  if (location.protocol === 'file:') h.classList.add('is-file'); else h.classList.replace('no-js', 'js');
-</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Chakra+Petch:wght@400;500;600;700&family=Share+Tech+Mono&display=swap">
+<style>
+/* Layout: arcade cabinet. Fixed HUD bar on top with an XP bar that fills as you scroll,
+   full-width "screens" stacked below (title screen → stats → quests → levels → inventory …),
+   each screen a bordered CRT panel on a synthwave grid. Single committed dark arcade theme. */
+:root{
+  --bg:#070912; --bg2:#0b0e1c; --panel:#0e1222; --panel2:#131832;
+  --line:#232a4a; --line2:#2f3a6a;
+  --tx:#e8ecf7; --mut:#8b94ad; --dim:#5b6480;
+  --cyan:#19e3ff; --mag:#ff3d8a; --lime:#9cff3d; --gold:#ffc83d; --violet:#8f7bff;
+  --cyan-dim:rgba(25,227,255,.14); --mag-dim:rgba(255,61,138,.14); --lime-dim:rgba(156,255,61,.14);
+  --gold-dim:rgba(255,200,61,.14); --violet-dim:rgba(143,123,255,.16);
+  --pixel:'Press Start 2P',monospace;
+  --ui:'Chakra Petch','Segoe UI',system-ui,sans-serif;
+  --mono:'Share Tech Mono',ui-monospace,Consolas,monospace;
+  --ease:cubic-bezier(.22,1,.36,1);
+  --r:4px;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+body{margin:0;background:var(--bg);color:var(--tx);font-family:var(--ui);font-size:16px;line-height:1.55;overflow-x:hidden;-webkit-font-smoothing:antialiased}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:60;background:var(--bg)}
+a{color:var(--cyan);text-decoration:none}
+a:hover{text-decoration:underline}
+img{max-width:100%;display:block}
+h1,h2,h3,h4{margin:0;text-wrap:balance}
+p{margin:0}
+ul{margin:0;padding:0;list-style:none}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+:focus-visible{outline:2px solid var(--lime);outline-offset:3px}
+
+/* ---------- background layers ---------- */
+#bg{position:fixed;inset:0;width:100%;height:100%;z-index:0;pointer-events:none}
+#scan{position:fixed;inset:0;z-index:1;pointer-events:none;
+  background:repeating-linear-gradient(0deg,rgba(0,0,0,.18) 0 1px,transparent 1px 3px);mix-blend-mode:multiply;opacity:.7}
+#vig{position:fixed;inset:0;z-index:1;pointer-events:none;background:radial-gradient(ellipse at center,transparent 55%,rgba(2,3,8,.85) 100%)}
+
+/* ---------- HUD ---------- */
+.hud{position:sticky;top:env(safe-area-inset-top,0px);z-index:50;background:rgba(7,9,18,.86);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+.hud__in{display:flex;align-items:center;gap:16px;padding-block:10px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));max-width:1240px;margin:0 auto}
+.brand{font-family:var(--pixel);font-size:11px;color:var(--cyan);letter-spacing:.5px;white-space:nowrap;text-shadow:0 0 12px var(--cyan-dim)}
+.brand:hover{text-decoration:none}
+.brand b{color:var(--mag)}
+.hud nav{display:flex;gap:4px;margin-left:auto;overflow-x:auto;scrollbar-width:none;min-width:0}
+.hud nav::-webkit-scrollbar{display:none}
+.hud nav a{font-family:var(--mono);font-size:13px;letter-spacing:.5px;color:var(--mut);padding:6px 10px;border:1px solid transparent;white-space:nowrap;text-transform:uppercase}
+.hud nav a:hover{color:var(--tx);text-decoration:none}
+.hud nav a.on{color:var(--lime);border-color:var(--line2);background:var(--panel)}
+.hud nav a span{color:var(--dim);margin-right:4px}
+.xp{position:absolute;left:0;right:0;bottom:-1px;height:3px;background:var(--line)}
+.xp i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--cyan),var(--lime));box-shadow:0 0 10px var(--lime)}
+.lvl{font-family:var(--mono);font-size:12px;color:var(--gold);white-space:nowrap;border:1px solid var(--line2);padding:4px 8px;background:var(--panel)}
+
+/* ---------- screens ---------- */
+main{position:relative;z-index:2}
+.wrap{max-width:1240px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.screen{padding-block:72px}
+.screen + .screen{border-top:1px dashed var(--line)}
+.shead{display:flex;align-items:flex-end;gap:16px;margin-bottom:36px;flex-wrap:wrap}
+.shead .tag{font-family:var(--mono);font-size:12px;color:var(--mag);letter-spacing:2px;text-transform:uppercase;border:1px solid var(--mag);padding:3px 8px;background:var(--mag-dim)}
+.shead h2{font-family:var(--pixel);font-size:clamp(16px,2.6vw,26px);line-height:1.5;color:var(--tx);text-shadow:3px 3px 0 #1a0f2e}
+.shead p{color:var(--mut);flex-basis:100%;max-width:62ch}
+
+/* bordered CRT panel */
+.panel{position:relative;background:var(--panel);border:1px solid var(--line2);box-shadow:inset 0 0 0 1px rgba(255,255,255,.02),0 0 0 4px var(--bg),0 0 0 5px var(--line)}
+.panel::before,.panel::after{content:"";position:absolute;width:10px;height:10px;border:2px solid var(--cyan);pointer-events:none}
+.panel::before{top:-2px;left:-2px;border-right:0;border-bottom:0}
+.panel::after{bottom:-2px;right:-2px;border-left:0;border-top:0}
+
+/* ---------- title screen ---------- */
+.title{display:grid;grid-template-columns:1.15fr .85fr;gap:40px;align-items:center;padding-block:56px}
+.press{font-family:var(--pixel);font-size:12px;color:var(--lime);letter-spacing:1px;animation:blink 1.1s steps(2) infinite;margin-bottom:20px}
+@keyframes blink{50%{opacity:0}}
+.hero-name{font-family:var(--pixel);font-size:clamp(26px,5.2vw,58px);line-height:1.25;color:var(--tx);
+  text-shadow:4px 4px 0 var(--mag),8px 8px 0 #2a0d3a}
+.hero-name .alt{color:var(--cyan);text-shadow:4px 4px 0 #0b3a8a,8px 8px 0 #2a0d3a}
+.class{display:inline-flex;align-items:center;gap:10px;margin-top:22px;font-family:var(--mono);font-size:14px;color:var(--gold);border:1px solid var(--gold);padding:6px 12px;background:var(--gold-dim);letter-spacing:1px;text-transform:uppercase}
+.class i{width:8px;height:8px;background:var(--lime);box-shadow:0 0 8px var(--lime);animation:blink 1.6s steps(2) infinite}
+.typed{margin-top:20px;font-family:var(--mono);font-size:clamp(15px,1.6vw,19px);color:var(--cyan);min-height:1.6em}
+.typed::after{content:"▌";animation:blink .9s steps(2) infinite;color:var(--lime)}
+.lede{margin-top:18px;color:var(--mut);max-width:58ch;font-size:17px}
+.cta{display:flex;gap:12px;flex-wrap:wrap;margin-top:30px}
+.btn{font-family:var(--pixel);font-size:10px;letter-spacing:.5px;padding:14px 18px;border:2px solid var(--cyan);color:var(--cyan);background:var(--bg2);position:relative;transition:transform .15s var(--ease),box-shadow .15s;text-transform:uppercase;display:inline-flex;align-items:center;gap:8px}
+.btn:hover{text-decoration:none;transform:translate(-2px,-2px);box-shadow:4px 4px 0 var(--cyan)}
+.btn.solid{background:var(--cyan);color:#041018}
+.btn.solid:hover{box-shadow:4px 4px 0 var(--mag)}
+.btn.mag{border-color:var(--mag);color:var(--mag)}
+.btn.mag:hover{box-shadow:4px 4px 0 var(--mag)}
+.party{display:flex;gap:10px;flex-wrap:wrap;margin-top:28px}
+.party a{font-family:var(--mono);font-size:13px;color:var(--mut);border:1px solid var(--line2);padding:6px 10px;background:var(--panel);letter-spacing:.5px}
+.party a:hover{color:var(--lime);border-color:var(--lime);text-decoration:none}
+.party a b{color:var(--dim);font-weight:400;margin-right:6px}
+
+/* player card */
+.pcard{padding:18px;transform:rotate(1.2deg);transition:transform .4s var(--ease)}
+.pcard:hover{transform:rotate(0) scale(1.01)}
+.pcard__top{display:flex;justify-content:space-between;align-items:center;font-family:var(--mono);font-size:12px;color:var(--mut);letter-spacing:1px;text-transform:uppercase;margin-bottom:12px}
+.pcard__top b{color:var(--gold)}
+.avatar{position:relative;aspect-ratio:1;max-width:100%;overflow:hidden;border:1px solid var(--line2);background:var(--bg2)}
+.avatar img{width:100%;height:100%;object-fit:cover;filter:saturate(1.1) contrast(1.05)}
+.avatar::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,transparent 60%,rgba(7,9,18,.9));pointer-events:none}
+.avatar .rank{position:absolute;left:12px;bottom:12px;font-family:var(--pixel);font-size:10px;color:var(--lime);text-shadow:0 0 10px var(--lime)}
+.avatar .rank small{display:block;font-family:var(--mono);font-size:12px;color:var(--mut);margin-top:6px;letter-spacing:1px}
+.bars{display:grid;gap:10px;margin-top:14px}
+.bar{display:grid;grid-template-columns:52px 1fr 48px;align-items:center;gap:10px;font-family:var(--mono);font-size:12px;letter-spacing:1px}
+.bar b{color:var(--mut);font-weight:400}
+.bar em{font-style:normal;text-align:right;color:var(--tx);font-variant-numeric:tabular-nums}
+.bar i{display:block;height:8px;background:var(--bg2);border:1px solid var(--line);position:relative;overflow:hidden}
+.bar i::after{content:"";position:absolute;inset:0;width:var(--w,0%);background:var(--c,var(--cyan));box-shadow:0 0 10px var(--c,var(--cyan));transition:width 1.4s var(--ease)}
+.bar i::before{content:"";position:absolute;inset:0;background:repeating-linear-gradient(90deg,transparent 0 9px,rgba(7,9,18,.55) 9px 10px);z-index:1}
+
+/* ---------- stats HUD ---------- */
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+.stat{padding:18px 18px 16px;border:1px solid var(--line2);background:var(--panel);position:relative;overflow:hidden}
+.stat::after{content:"";position:absolute;right:-20px;top:-20px;width:70px;height:70px;border:1px solid var(--line2);transform:rotate(45deg)}
+.stat small{font-family:var(--mono);font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--mut)}
+.stat b{display:block;font-family:var(--pixel);font-size:clamp(20px,2.4vw,30px);margin:12px 0 8px;color:var(--tx);font-variant-numeric:tabular-nums;line-height:1.2}
+.stat b.c{color:var(--cyan)} .stat b.m{color:var(--mag)} .stat b.l{color:var(--lime)} .stat b.g{color:var(--gold)}
+.stat span{color:var(--mut);font-size:14px}
+.statrow{display:grid;grid-template-columns:1.1fr .9fr;gap:24px;margin-top:24px;align-items:start}
+.attrs{padding:22px}
+.attrs h3,.spell h3{font-family:var(--mono);font-size:12px;letter-spacing:2px;text-transform:uppercase;color:var(--mag);margin-bottom:16px}
+.attr{display:grid;grid-template-columns:150px 1fr 40px;align-items:center;gap:12px;padding:8px 0;border-bottom:1px solid var(--line);font-size:14px}
+.attr:last-child{border-bottom:0}
+.attr b{font-weight:600;color:var(--tx)}
+.attr b small{display:block;font-weight:400;color:var(--dim);font-family:var(--mono);font-size:11px;letter-spacing:1px}
+.attr em{font-style:normal;font-family:var(--mono);color:var(--mut);text-align:right;font-variant-numeric:tabular-nums}
+.pips{display:flex;gap:4px}
+.pips i{flex:1;height:12px;background:var(--bg2);border:1px solid var(--line)}
+.pips i.f{background:var(--c,var(--cyan));border-color:var(--c,var(--cyan));box-shadow:0 0 6px var(--c,var(--cyan))}
+.spell{padding:0;overflow:hidden}
+.spell h3{padding:14px 18px 0}
+.spell figcaption{display:flex;align-items:center;gap:8px;padding:10px 18px;border-bottom:1px solid var(--line);font-family:var(--mono);font-size:12px;color:var(--mut)}
+.spell figcaption i{width:10px;height:10px;border-radius:50%;background:var(--line2)}
+.spell figcaption i:nth-child(1){background:var(--mag)} .spell figcaption i:nth-child(2){background:var(--gold)} .spell figcaption i:nth-child(3){background:var(--lime)}
+.spell figure{margin:0}
+.spell pre{margin:0;padding:18px;overflow-x:auto;font-family:var(--mono);font-size:13.5px;line-height:1.65;color:var(--tx)}
+.k{color:var(--mag)} .t{color:var(--cyan)} .f{color:var(--lime)} .n{color:var(--gold)} .cm{color:var(--dim)}
+.spell .lore{padding:0 18px 18px;color:var(--mut);font-size:14px}
+
+/* ---------- quests ---------- */
+.quests{display:grid;gap:18px}
+.quest{display:grid;grid-template-columns:150px 1fr;gap:0;overflow:hidden}
+.quest__meta{padding:18px;border-right:1px solid var(--line2);background:var(--bg2);display:flex;flex-direction:column;gap:8px}
+.quest__meta .st{font-family:var(--pixel);font-size:9px;letter-spacing:.5px;padding:6px 8px;display:inline-block;width:max-content}
+.st.active{color:var(--lime);border:1px solid var(--lime);background:var(--lime-dim);animation:pulse 2s infinite}
+.st.done{color:var(--gold);border:1px solid var(--gold);background:var(--gold-dim)}
+@keyframes pulse{50%{box-shadow:0 0 14px var(--lime-dim)}}
+.quest__meta time{font-family:var(--mono);font-size:12px;color:var(--mut);letter-spacing:.5px}
+.quest__meta .diff{font-size:13px;color:var(--gold);letter-spacing:2px;margin-top:auto}
+.quest__body{padding:20px 22px}
+.quest__body h3{font-size:20px;font-weight:700;color:var(--tx)}
+.quest__body .org{font-family:var(--mono);font-size:13px;color:var(--cyan);margin:4px 0 14px;letter-spacing:.5px}
+.quest__body li{position:relative;padding-left:22px;color:var(--mut);font-size:15px;margin-bottom:8px}
+.quest__body li::before{content:"▸";position:absolute;left:0;color:var(--mag)}
+.quest__body li strong{color:var(--tx);font-weight:600}
+.loot{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
+.loot span{font-family:var(--mono);font-size:12px;color:var(--lime);border:1px dashed var(--lime);padding:3px 8px;background:var(--lime-dim)}
+.loot span.g{color:var(--gold);border-color:var(--gold);background:var(--gold-dim)}
+
+/* ---------- levels (projects) ---------- */
+.levels{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+.level{display:flex;flex-direction:column;overflow:hidden;transition:transform .35s var(--ease),box-shadow .35s;transform-style:preserve-3d}
+.level:hover{transform:translateY(-4px);box-shadow:0 0 0 4px var(--bg),0 0 0 5px var(--cyan),0 20px 50px -20px var(--cyan-dim)}
+.thumb{position:relative;aspect-ratio:16/9;max-width:100%;background:var(--bg2);overflow:hidden;border-bottom:1px solid var(--line2)}
+.thumb img,.thumb canvas{width:100%;height:100%;object-fit:cover;display:block;transition:transform .6s var(--ease)}
+.level:hover .thumb img{transform:scale(1.05)}
+.thumb .num{position:absolute;left:10px;top:10px;font-family:var(--pixel);font-size:10px;color:var(--tx);background:rgba(7,9,18,.85);border:1px solid var(--line2);padding:6px 8px}
+.thumb .badge{position:absolute;right:10px;top:10px;font-family:var(--mono);font-size:11px;letter-spacing:1px;text-transform:uppercase;padding:4px 8px;background:rgba(7,9,18,.85);border:1px solid}
+.badge.live{color:var(--lime);border-color:var(--lime)} .badge.boss{color:var(--mag);border-color:var(--mag)} .badge.lab{color:var(--violet);border-color:var(--violet)}
+.thumb .hint{position:absolute;left:10px;bottom:10px;font-family:var(--mono);font-size:11px;color:var(--cyan);background:rgba(7,9,18,.85);padding:3px 8px;border:1px solid var(--line2)}
+.level__body{padding:18px;display:flex;flex-direction:column;gap:10px;flex:1}
+.level__body h3{font-size:18px;font-weight:700;line-height:1.3}
+.diffrow{display:flex;justify-content:space-between;align-items:center;font-family:var(--mono);font-size:12px;color:var(--mut);letter-spacing:1px}
+.diffrow b{color:var(--gold);letter-spacing:2px;font-weight:400}
+.level__body p{color:var(--mut);font-size:14.5px}
+.level__body p strong{color:var(--tx);font-weight:600}
+.load{display:flex;gap:6px;flex-wrap:wrap}
+.load span{font-family:var(--mono);font-size:11.5px;color:var(--cyan);border:1px solid var(--line2);padding:2px 7px;background:var(--bg2)}
+.acts{display:flex;gap:8px;flex-wrap:wrap;margin-top:auto;padding-top:8px}
+.acts a,.acts span{font-family:var(--pixel);font-size:8.5px;letter-spacing:.5px;padding:10px 12px;border:1px solid var(--line2);color:var(--mut);text-transform:uppercase}
+.acts a.play{color:#041018;background:var(--lime);border-color:var(--lime)}
+.acts a:hover{text-decoration:none;color:var(--tx);border-color:var(--cyan)}
+.acts a.play:hover{color:#041018;box-shadow:0 0 14px var(--lime-dim)}
+.acts span{border-style:dashed;color:var(--dim)}
+
+/* ---------- inventory (skills) ---------- */
+.inv{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+.slot{padding:16px;border:1px solid var(--line2);background:var(--panel);position:relative}
+.slot::before{content:"";position:absolute;inset:0;background:linear-gradient(135deg,var(--rc-dim,transparent),transparent 55%);pointer-events:none}
+.slot h4{font-family:var(--mono);font-size:12px;letter-spacing:2px;text-transform:uppercase;color:var(--rc,var(--cyan));display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+.slot h4 small{font-size:10px;color:var(--dim);letter-spacing:1px}
+.items{display:flex;flex-wrap:wrap;gap:6px;position:relative}
+.items span{font-size:13px;font-weight:500;padding:5px 9px;border:1px solid var(--line2);background:var(--bg2);color:var(--tx);transition:transform .15s var(--ease),border-color .15s}
+.items span:hover{transform:translateY(-2px);border-color:var(--rc,var(--cyan))}
+.leg{--rc:var(--gold);--rc-dim:var(--gold-dim)} .epic{--rc:var(--violet);--rc-dim:var(--violet-dim)} .rare{--rc:var(--cyan);--rc-dim:var(--cyan-dim)} .common{--rc:var(--lime);--rc-dim:var(--lime-dim)}
+.rarity{display:flex;gap:16px;flex-wrap:wrap;margin-top:18px;font-family:var(--mono);font-size:12px;color:var(--mut);letter-spacing:1px}
+.rarity i{display:inline-block;width:10px;height:10px;margin-right:6px;vertical-align:-1px}
+
+/* ---------- trophies ---------- */
+.trophies{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+.trophy{padding:22px 18px;text-align:center;border:1px solid var(--line2);background:var(--panel);position:relative;overflow:hidden}
+.trophy::before{content:"";position:absolute;inset:auto -40% -60% -40%;height:70%;background:radial-gradient(ellipse at bottom,var(--tc-dim),transparent 70%);pointer-events:none}
+.trophy .cup{width:54px;height:54px;margin:0 auto 12px;display:grid;place-items:center;border:2px solid var(--tc);color:var(--tc);background:var(--bg2);box-shadow:0 0 18px var(--tc-dim)}
+.trophy .cup svg{width:28px;height:28px}
+.trophy b{display:block;font-family:var(--pixel);font-size:16px;color:var(--tc);margin-bottom:10px}
+.trophy p{color:var(--mut);font-size:14px}
+.trophy p strong{color:var(--tx);font-weight:600}
+.trophy .unl{font-family:var(--mono);font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--lime);margin-top:12px}
+.gold{--tc:var(--gold);--tc-dim:var(--gold-dim)} .silver{--tc:#d6dcf0;--tc-dim:rgba(214,220,240,.14)} .bronze{--tc:#ff9a5c;--tc-dim:rgba(255,154,92,.16)} .plat{--tc:var(--cyan);--tc-dim:var(--cyan-dim)}
+
+/* ---------- badges (certs) ---------- */
+.badges{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}
+.cert{display:grid;grid-template-columns:64px 1fr auto;gap:16px;align-items:center;padding:16px 18px;border:1px solid var(--line2);background:var(--panel);color:var(--tx);transition:border-color .2s,transform .2s var(--ease)}
+.cert:hover{text-decoration:none;border-color:var(--gold);transform:translateX(4px)}
+.cert .hex{width:64px;height:64px;display:grid;place-items:center;clip-path:polygon(25% 5%,75% 5%,100% 50%,75% 95%,25% 95%,0 50%);background:var(--gold);color:#2a1a00;font-family:var(--pixel);font-size:9px}
+.cert time{font-family:var(--mono);font-size:12px;color:var(--mut);letter-spacing:1px}
+.cert h3{font-size:16px;font-weight:700;margin-top:2px}
+.cert p{color:var(--mut);font-size:13.5px}
+.cert .go{font-family:var(--pixel);font-size:8px;color:var(--gold);white-space:nowrap}
+
+/* ---------- console ---------- */
+.conrow{display:grid;grid-template-columns:1fr;gap:24px}
+.term{overflow:hidden}
+.term__bar{display:flex;align-items:center;gap:10px;padding:10px 14px;border-bottom:1px solid var(--line2);background:var(--bg2);font-family:var(--mono);font-size:12px;color:var(--mut)}
+.term__bar .dots{display:flex;gap:6px}
+.term__bar .dots i{width:10px;height:10px;border-radius:50%}
+.term__bar .dots i:nth-child(1){background:var(--mag)} .term__bar .dots i:nth-child(2){background:var(--gold)} .term__bar .dots i:nth-child(3){background:var(--lime)}
+.term__bar .on{margin-left:auto;color:var(--lime);letter-spacing:2px}
+.term__bar .on::before{content:"●";margin-right:6px;animation:blink 1.4s steps(2) infinite}
+.term__body{position:relative;height:380px;overflow-y:auto;padding:16px;font-family:var(--mono);font-size:14px;line-height:1.6;background:var(--bg)}
+.term__body canvas{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+.tl{white-space:pre-wrap;word-break:break-word}
+.tl.sys{color:var(--dim)} .tl.ai{color:var(--tx)} .tl.err{color:var(--mag)} .tl.usr{color:var(--lime)}
+.tl .pr{color:var(--cyan)}
+.tl a{color:var(--gold);text-decoration:underline}
+.qbs{display:flex;gap:6px;flex-wrap:wrap;margin:12px 0}
+.qb{font-family:var(--mono);font-size:12px;color:var(--cyan);border:1px solid var(--line2);padding:4px 10px;background:var(--panel);letter-spacing:.5px}
+.qb:hover{border-color:var(--cyan);background:var(--cyan-dim)}
+.term__in{display:flex;align-items:center;gap:8px;padding:10px 14px;border-top:1px solid var(--line2);background:var(--bg2);font-family:var(--mono)}
+.term__in label{color:var(--cyan);font-size:14px;white-space:nowrap}
+.term__in input{flex:1;min-width:0;background:none;border:0;color:var(--tx);font:inherit;font-size:14px;outline:none;caret-color:var(--lime)}
+.term__in input::placeholder{color:var(--dim)}
+.ghrow{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:24px}
+.gh{padding:14px;border:1px solid var(--line2);background:var(--panel);min-height:120px;display:flex;flex-direction:column;gap:10px}
+.gh h3{font-family:var(--mono);font-size:12px;letter-spacing:2px;text-transform:uppercase;color:var(--mut)}
+.gh img{width:100%;height:auto}
+.gh .off{display:none;color:var(--mut);font-size:14px}
+.gh.off img{display:none} .gh.off .off{display:block}
+
+/* ---------- co-op (contact) ---------- */
+.coop{display:grid;grid-template-columns:1fr 1.1fr;gap:28px;align-items:start}
+.cinfo{padding:24px}
+.cinfo h3{font-family:var(--pixel);font-size:13px;line-height:1.6;color:var(--tx);margin-bottom:14px}
+.cinfo > p{color:var(--mut);font-size:15px;margin-bottom:20px}
+.cb{display:grid;grid-template-columns:44px 1fr auto;gap:14px;align-items:center;padding:12px 14px;border:1px solid var(--line2);background:var(--bg2);color:var(--tx);margin-bottom:10px;width:100%;text-align:left}
+.cb:hover{border-color:var(--cyan);text-decoration:none}
+.cb .ic{width:44px;height:44px;display:grid;place-items:center;border:1px solid var(--line2);color:var(--cyan);background:var(--panel)}
+.cb .ic svg{width:20px;height:20px}
+.cb span{display:block;font-family:var(--mono);font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--mut)}
+.cb strong{font-weight:600;font-size:15px;word-break:break-all}
+.cb .cp{font-family:var(--mono);font-size:11px;color:var(--lime);letter-spacing:1px;border:1px solid var(--line2);padding:4px 8px}
+.socs{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px}
+.socs a{font-family:var(--pixel);font-size:8.5px;color:var(--mut);border:1px solid var(--line2);padding:10px 12px}
+.socs a:hover{color:var(--mag);border-color:var(--mag);text-decoration:none}
+form.panel{padding:24px;display:grid;gap:14px}
+.frow{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+form label{display:grid;gap:6px;font-family:var(--mono);font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--mut)}
+form input,form textarea{font-family:var(--ui);font-size:15px;color:var(--tx);background:var(--bg2);border:1px solid var(--line2);padding:11px 12px;outline:none;width:100%;resize:vertical}
+form input:focus,form textarea:focus{border-color:var(--cyan);box-shadow:0 0 0 3px var(--cyan-dim)}
+.hp{position:absolute;left:-9999px}
+.send{font-family:var(--pixel);font-size:10px;padding:16px;background:var(--mag);color:#2a0012;border:2px solid var(--mag);text-transform:uppercase;letter-spacing:.5px;transition:transform .15s var(--ease),box-shadow .15s}
+.send:hover{transform:translate(-2px,-2px);box-shadow:4px 4px 0 var(--cyan)}
+.fstat{font-family:var(--mono);font-size:13px;color:var(--lime);min-height:1.4em}
+.fstat a{color:var(--gold)}
+.fstat.err{color:var(--mag)} .fstat.ok{color:var(--lime)}
+form .bad{border-color:var(--mag);box-shadow:0 0 0 3px var(--mag-dim)}
+.form__copy{display:block;margin-top:8px;font-family:var(--mono);font-size:12px;color:var(--gold);text-decoration:underline}
+.foot{margin-top:60px;padding-top:28px;border-top:1px solid var(--line);display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;font-family:var(--mono);font-size:12px;color:var(--dim);letter-spacing:.5px}
+.foot b{color:var(--cyan);font-family:var(--pixel);font-size:9px}
+
+/* ---------- reveal + motion ---------- */
+.rv{opacity:1;transform:none;transition:opacity .7s var(--ease),transform .7s var(--ease)}
+.js .rv.pre{opacity:0;transform:translateY(18px)}
+.toast{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom,0px));transform:translate(-50%,20px);z-index:70;background:var(--panel2);border:1px solid var(--lime);color:var(--lime);font-family:var(--pixel);font-size:10px;padding:14px 18px;opacity:0;pointer-events:none;transition:all .3s var(--ease);text-align:center;max-width:90vw}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+.god .hero-name{animation:hue 3s linear infinite}
+@keyframes hue{to{filter:hue-rotate(360deg)}}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.001s!important;animation-iteration-count:1!important;transition-duration:.001s!important}
+  .js .rv.pre{opacity:1;transform:none}
+}
+
+/* ---------- responsive ---------- */
+@media (max-width:1040px){
+  .stats,.inv,.trophies{grid-template-columns:repeat(2,1fr)}
+  .levels{grid-template-columns:repeat(2,1fr)}
+  .ghrow{grid-template-columns:1fr}
+}
+@media (max-width:820px){
+  .title{grid-template-columns:1fr;gap:32px}
+  .pcard{max-width:420px;transform:none}
+  .statrow,.coop,.badges{grid-template-columns:1fr}
+  .quest{grid-template-columns:1fr}
+  .quest__meta{border-right:0;border-bottom:1px solid var(--line2);flex-direction:row;align-items:center;flex-wrap:wrap}
+  .quest__meta .diff{margin-top:0;margin-left:auto}
+  .lvl{display:none}
+}
+@media (max-width:600px){
+  .screen{padding-block:52px}
+  .stats,.inv,.trophies,.levels{grid-template-columns:1fr}
+  .frow{grid-template-columns:1fr}
+  .attr{grid-template-columns:110px 1fr 36px}
+  .cert{grid-template-columns:52px 1fr}
+  .cert .hex{width:52px;height:52px}
+  .cert .go{grid-column:2}
+  .hero-name{text-shadow:3px 3px 0 var(--mag)}
+  .hero-name .alt{text-shadow:3px 3px 0 #0b3a8a}
+}
+</style>
 </head>
 <body>
-<a class="skip-link" href="#about">Skip to content</a>
-<div id="prog"></div>
+<canvas id="bg" aria-hidden="true"></canvas>
+<div id="scan" aria-hidden="true"></div>
+<div id="vig" aria-hidden="true"></div>
 
-<!-- ambient layers -->
-<div class="bg" aria-hidden="true">
-  <div class="orb o1"></div><div class="orb o2"></div><div class="orb o3"></div><div class="orb o4"></div>
-</div>
-<canvas id="mesh" aria-hidden="true"></canvas>
-<canvas id="stars" aria-hidden="true"></canvas>
-<div id="spot" aria-hidden="true"></div>
-<div id="grain" aria-hidden="true"></div>
-<div id="ring" aria-hidden="true"></div><div id="dot" aria-hidden="true"></div>
-
-<!-- top left branding -->
-<a id="top-brand" class="top-brand" href="#top" aria-label="Back to top">&lt;Amir.Choudhary/&gt;</a>
-
-<!-- icon nav (built from js/config.js) -->
-<nav class="nav" id="nav" aria-label="Sections"></nav>
-
-<!--
-  The slides. One <section class="slide"> per entry in js/config.js, in the same order —
-  js/loader.js matches them by id. Content lives here (not fetched) so crawlers and
-  link previews see it.
--->
-<main id="deck">
-
-<!-- ============ 00 · Home ============ -->
-<section class="slide" id="top" aria-label="Home">
-<div class="slide__inner">
-<div class="wrap hero">
-
-<div class="scene" aria-hidden="true">
-  <svg class="scene__svg" viewBox="0 0 300 210">
-    <defs>
-      <linearGradient id="scr" x1="0" y1="0" x2="1" y2="1">
-        <stop offset="0" stop-color="#22d3ee" stop-opacity=".35"/>
-        <stop offset="1" stop-color="#7c5cff" stop-opacity=".22"/>
-      </linearGradient>
-      <linearGradient id="edge" x1="0" y1="0" x2="1" y2="1">
-        <stop offset="0" stop-color="#7c5cff"/><stop offset="1" stop-color="#22d3ee"/>
-      </linearGradient>
-      <radialGradient id="pop">
-        <stop offset="0" stop-color="#eaf9ff" stop-opacity=".95"/>
-        <stop offset=".45" stop-color="#22d3ee" stop-opacity=".45"/>
-        <stop offset="1" stop-color="#22d3ee" stop-opacity="0"/>
-      </radialGradient>
-    </defs>
-
-    <!-- desk -->
-    <path class="desk" d="M28 168h244"/>
-
-    <!-- the kid, mid-session -->
-    <g class="rig">
-      <path class="chair" d="M112 108q-6 0-6 6v46h88v-46q0-6-6-6z"/>
-      <path class="body" d="M133 92h34l16 66h-66z"/>
-      <circle class="head" cx="150" cy="72" r="16"/>
-      <path class="hair" d="M134 68q3-16 16-16t16 16q-7-7-16-7t-16 7z"/>
-      <g class="arms">
-        <path class="arm" d="M134 98q-18 22-16 52"/>
-        <path class="arm" d="M166 98q18 22 16 52"/>
-        <circle class="hand h1" cx="120" cy="152" r="4.5"/>
-        <circle class="hand h2" cx="180" cy="152" r="4.5"/>
-      </g>
-
-      <!-- laptop -->
-      <path class="lid" d="M108 104h84l8 54h-100z"/>
-      <path class="screen" d="M113 109h74l7 44h-88z"/>
-      <g class="code">
-        <rect x="119" y="115" width="34" height="3" rx="1.5"/>
-        <rect x="119" y="122" width="52" height="3" rx="1.5"/>
-        <rect x="124" y="129" width="26" height="3" rx="1.5"/>
-        <rect x="124" y="136" width="44" height="3" rx="1.5"/>
-        <rect x="119" y="143" width="38" height="3" rx="1.5"/>
-      </g>
-      <path class="base" d="M96 158h108l10 10H86z"/>
-      <path class="pad" d="M138 161h24"/>
-    </g>
-
-    <!-- the surge -->
-    <g class="boom">
-      <circle class="pop" cx="150" cy="132" r="86" fill="url(#pop)"/>
-      <circle class="ring r1" cx="150" cy="132" r="26"/>
-      <circle class="ring r2" cx="150" cy="132" r="26"/>
-      <path class="bolt b1" d="M150 132 132 104l14 4-16-30"/>
-      <path class="bolt b2" d="M150 132 186 112l-13 8 26-14"/>
-      <path class="bolt b3" d="M150 132 118 140l12 6-30 10"/>
-      <path class="bolt b4" d="M150 132 196 154l-14 1 26 12"/>
-      <path class="bolt b5" d="M150 132 152 92l8 12 2-34"/>
-      <path class="bolt b6" d="M150 132 106 118l13-2-26-12"/>
-    </g>
-  </svg>
-
-  <p class="scene__welcome"><span>Welcome to</span><b class="grad">my world</b></p>
-</div>
-
-<!-- 3D rotating code cube -->
-<div class="code-cube-wrap" aria-hidden="true">
-  <div class="code-cube">
-    <div class="cube-face front"><code>render();</code></div>
-    <div class="cube-face back"><code>float4 col;</code></div>
-    <div class="cube-face cube-right"><code>&lt;App /&gt;</code></div>
-    <div class="cube-face cube-left"><code>app.listen</code></div>
-    <div class="cube-face cube-top"><code>vec3 norm;</code></div>
-    <div class="cube-face cube-bottom"><code>dp[i][j]</code></div>
+<header class="hud">
+  <div class="hud__in">
+    <a class="brand" href="#start">&lt;Amir<b>.</b>exe/&gt;</a>
+    <nav id="nav" aria-label="Screens">
+      <a href="#stats"><span>01</span>Stats</a>
+      <a href="#quests"><span>02</span>Quests</a>
+      <a href="#levels"><span>03</span>Levels</a>
+      <a href="#inventory"><span>04</span>Inventory</a>
+      <a href="#trophies"><span>05</span>Trophies</a>
+      <a href="#badges"><span>06</span>Badges</a>
+      <a href="#console"><span>07</span>Console</a>
+      <a href="#coop"><span>08</span>Co-op</a>
+    </nav>
+    <div class="lvl" id="lvl">XP 0%</div>
   </div>
-</div>
+  <div class="xp" aria-hidden="true"><i id="xpbar"></i></div>
+</header>
 
-<span class="tag"><i></i>  Noida, India</span>
-<h1>
-  <span class="ln"><span style="animation-delay:.35s">Amir</span></span>
-  <span class="ln"><span class="grad" style="animation-delay:.48s">Choudhary</span></span>
-</h1>
-<p class="role"><span id="type">Software Development Engineer @ Wasp3D</span><span class="cur"></span></p>
-<p class="lead">I build things that have to be fast — real-time rendering pipelines in C++ / DirectX 12 at Wasp3D, and scalable MERN applications with clean APIs, secure auth and AI integrations.</p>
-<div class="cta">
-  <a class="btn solid" href="#projects">View my work →</a>
-  <a class="btn" href="Amir-Choudhary-Resume.pdf" target="_blank" rel="noopener">↓ Résumé (PDF)</a>
-  <a class="btn" href="mailto:amirchoudharyb03@gmail.com">Get in touch</a>
-</div>
-<div class="profiles">
-  <a href="https://github.com/Amirchoudhary09" target="_blank" rel="noopener">GitHub</a>
-  <a href="https://linkedin.com/in/amirchoudhary09" target="_blank" rel="noopener">LinkedIn</a>
-  <a href="https://leetcode.com/u/AMIR09/" target="_blank" rel="noopener">LeetCode</a>
-  <a href="https://www.geeksforgeeks.org/profile/amirchoudharyb09" target="_blank" rel="noopener">GeeksforGeeks</a>
-</div>
-<div class="scroll">SCROLL</div>
+<main>
 
-</div>
-</div>
-</section>
-
-<!-- ============ 01 · About Me ============ -->
-<section class="slide" id="about" aria-label="About Me">
-<div class="slide__inner">
-<div class="wrap">
-
-<div class="head rv"><em>00</em><h2>About Me</h2><div class="rule"></div></div>
-
-<div class="about">
-  <div class="about__copy rv">
-    <p>I&rsquo;m an SDE at <strong>Wasp3D</strong>, working on the rendering side of a real-time graphics engine — planar reflections, water simulation, HLSL shaders and GPU resource management in <strong>C++ / DirectX 12</strong>.</p>
-    <p>Before that I built full-stack MERN products: REST APIs, JWT &amp; OAuth auth, and AI integrations. Both halves come down to the same thing — make it correct, then make it fast.</p>
-    <p>Finishing a B.Tech in CS (AI &amp; ML) at G.L. Bajaj, and solving DSA most days.</p>
-  </div>
-
-  <div class="about__photo rv">
-    <div class="photo-frame tilt">
-      <div class="glow"></div>
-      <img src="img/profile.webp" alt="Illustrated portrait of Amir Choudhary" width="720" height="720" loading="lazy" decoding="async">
-      <div class="photo-border"></div>
-    </div>
-  </div>
-</div>
-
-<div class="stats rv">
-  <div class="stat"><b data-to="900" data-suf="+">0</b><span>DSA problems solved</span></div>
-  <div class="stat"><b data-to="50" data-suf="%">0</b><span>GPU bandwidth saved</span></div>
-  <div class="stat"><b data-to="200" data-suf="+">0</b><span>AshGuard users</span></div>
-  <div class="stat"><b data-to="3" data-pre="Top ">0</b><span>Adobe Emerge, IIT Delhi</span></div>
-</div>
-
-<figure class="snippet rv">
-  <figcaption><span class="dots"><i></i><i></i><i></i></span> water.hlsl</figcaption>
-  <pre><code><span class="c">// two RTs packed into one — half the bandwidth</span>
-<span class="k">float2</span> uv   = i.screenUV + <span class="f">Ripple</span>(i.wpos, time);
-<span class="k">float3</span> refl = ReflectionRT.<span class="f">Sample</span>(s, uv).rgb;
-<span class="k">float</span>  f    = <span class="f">Fresnel</span>(i.N, viewDir, <span class="n">0.02</span>);
-
-<span class="k">return</span> <span class="f">float4</span>(<span class="f">lerp</span>(waterTint, refl, f), <span class="n">1</span>);</code></pre>
-</figure>
-
-<div class="marq rv">
-  <div>
-    <span>C++</span><span>DirectX 12</span><span>HLSL Shaders</span><span>React.js</span><span>Node.js</span>
-    <span>MongoDB</span><span>TypeScript</span><span>Python</span><span>System Design</span><span>Gemini API</span>
-    <span>C++</span><span>DirectX 12</span><span>HLSL Shaders</span><span>React.js</span><span>Node.js</span>
-    <span>MongoDB</span><span>TypeScript</span><span>Python</span><span>System Design</span><span>Gemini API</span>
-  </div>
-</div>
-
-</div>
-</div>
-</section>
-
-<!-- ============ 02 · Experience ============ -->
-<section class="slide" id="work" aria-label="Experience">
-<div class="slide__inner">
-<div class="wrap">
-
-<div class="head rv"><em>01</em><h2>Experience</h2><div class="rule"></div></div>
-<div class="tl">
-  <article class="job rv">
-    <h3>Software Development Engineer</h3>
-    <p class="co">Wasp3D · Noida, India (Onsite)</p>
-    <p class="when">April 2026 — Present</p>
-    <ul>
-      <li>Optimized the planar reflection rendering pipeline by reducing render targets from <strong>2 to 1</strong>, cutting GPU memory bandwidth usage by <strong>~50%</strong> while preserving visual quality via render-target packing.</li>
-      <li>Implemented real-time water rendering — <strong>ripple simulation, flow-map animation, distortion and planar reflections</strong> — improving rendering stability and visual fidelity by <strong>30%</strong>.</li>
-      <li>Developed and debugged <strong>HLSL vertex and pixel shaders</strong>, cutting reflection, lighting, material and texture-sampling defects by <strong>40%</strong>.</li>
-      <li>Optimized graphics engine components in <strong>C++ and DirectX 9/12</strong> — render targets, textures, GPU resource management — for a <strong>20%</strong> gain in performance and resource utilization.</li>
-    </ul>
-  </article>
-  <article class="job rv">
-    <h3>Software Development Engineer Intern</h3>
-    <p class="co">Bluestocks Fintech · Remote</p>
-    <p class="when">March 2025 — May 2025</p>
-    <ul>
-      <li>Built a responsive Services page in <strong>React.js + Tailwind CSS</strong> with a modular component architecture, improving page load performance by <strong>20%</strong>; shipped full <strong>CRUD REST APIs</strong> with Express.js and MongoDB.</li>
-      <li>Tested APIs in <strong>Postman</strong> with proper error handling, status codes and edge-case validation for a reliable frontend–backend data flow.</li>
-      <li>Improved UI consistency across modules and worked in <strong>Agile sprints</strong>, presenting features to stakeholders in bi-weekly demos.</li>
-    </ul>
-  </article>
-  <article class="job rv">
-    <h3>B.Tech, Computer Science — AI &amp; Machine Learning</h3>
-    <p class="co">G.L. Bajaj Institute of Technology and Management · Greater Noida</p>
-    <p class="when">2022 — 2026 · CGPA 8.01 / 10</p>
-  </article>
-</div>
-
-</div>
-</div>
-</section>
-
-<!-- ============ 03 · Projects ============ -->
-<section class="slide" id="projects" aria-label="Projects">
-<div class="slide__inner">
-<div class="wrap">
-
-<div class="head rv"><em>02</em><h2>Selected Projects</h2><div class="rule"></div></div>
-<div class="grid">
-  <article class="card rv tilt">
-    <div class="glow"></div>
-    <div class="card__img">
-      <img src="img/ashguard.webp" alt="AshGuard dashboard — live location map, SOS button, safe route finder and emergency contacts" width="1200" height="670" loading="lazy" decoding="async">
-    </div>
-    <h3>AshGuard — Women Safety &amp; Travel Assistant</h3>
-    <p class="stack">React.js · Python · Express.js · MongoDB Atlas · Gemini AI · ML</p>
-    <ul>
-      <li>AI-powered safety web app with real-time SOS alerts, live location tracking and a <strong>1-Tap SOS</strong> system (fake call, live recording, guardian alert, police dial, siren).</li>
-      <li><strong>Safe Route Finder</strong> using Google Maps API and <strong>K-Means clustering</strong> to detect crime-prone areas — <strong>93% route accuracy</strong>.</li>
-      <li>Full-stack build with a <strong>Gemini AI chatbot</strong> and JWT auth, deployed on Vercel &amp; Railway, serving <strong>200+ active users</strong>.</li>
-    </ul>
-    <div class="links">
-      <a href="https://enchantress-ashguard.vercel.app/" target="_blank" rel="noopener">Live ↗</a>
-      <a href="https://github.com/Amirchoudhary09/ASHGUARD" target="_blank" rel="noopener">GitHub ↗</a>
-    </div>
-  </article>
-  <article class="card rv tilt">
-    <div class="glow"></div>
-    <div class="card__img">
-      <img src="img/lostandfound.webp" alt="Lost &amp; Found platform — found-item cards with search filters and matching results" width="1200" height="670" loading="lazy" decoding="async">
-    </div>
-    <h3>Lost &amp; Found Community Platform</h3>
-    <p class="stack">MERN — React.js · Node.js · Express.js · MongoDB</p>
-    <ul>
-      <li>Full-stack lost &amp; found app with image uploads, location tagging, AI-powered filtering and a matching algorithm that suggests potential item matches.</li>
-      <li><strong>RESTful APIs</strong> on Node.js/Express with MongoDB Atlas, secured by <strong>JWT and OAuth 2.0 (Google Sign-In)</strong>.</li>
-      <li>Interactive React frontend with real-time filtering by location and category; query optimization delivered <strong>40% faster search</strong>.</li>
-    </ul>
-    <div class="links">
-      <a href="https://lost-and-find-ytbs.vercel.app/" target="_blank" rel="noopener">Live ↗</a>
-      <a href="https://github.com/Amirchoudhary09/lost-and-find" target="_blank" rel="noopener">GitHub ↗</a>
-    </div>
-  </article>
-  <article class="card rv tilt card--gfx">
-    <div class="glow"></div>
-    <div class="card__img card__demo">
-      <!-- js/water.js draws a small WebGL water sketch here; move the cursor over it -->
-      <canvas class="water" role="img" aria-label="Interactive water rendering demo: waves, cursor ripples and Fresnel reflections"></canvas>
-      <span class="demo-tag"><i></i>WebGL · live</span>
-    </div>
-    <h3>Real-time Water &amp; Planar Reflections</h3>
-    <p class="stack">C++ · DirectX 12 · HLSL · Wasp3D engine</p>
-    <ul>
-      <li>Ripple simulation, flow-map animation, distortion and <strong>planar reflections</strong> shipped inside a production real-time graphics engine.</li>
-      <li>Packed two reflection render targets into one — <strong>~50% less GPU bandwidth</strong> at identical visual quality.</li>
-      <li>The canvas above is a tiny WebGL sketch of the same idea: waves + ripples → normals → <strong>Fresnel-weighted reflection</strong>.</li>
-    </ul>
-    <div class="links">
-      <span class="pill">Proprietary engine</span>
-      <a href="#about">Shader snippet ↗</a>
-      <a href="#work">Role details ↗</a>
-    </div>
-  </article>
-  <article class="card rv tilt">
-    <div class="glow"></div>
-    <div class="card__img">
-      <img src="img/dx12-cube.webp" alt="A textured earth cube and a wireframe cone rendered with DirectX 12" width="1200" height="670" loading="lazy" decoding="async">
-    </div>
-    <h3>DirectX 12 Procedural Mesh Renderer</h3>
-    <p class="stack">C++ · DirectX 12 · Win32 · HLSL</p>
-    <ul>
-      <li>Procedural <strong>cube and cone meshes</strong> generated at runtime — vertex / index buffers, per-face normals and UVs — drawn through a hand-rolled DX12 pipeline: command allocator &amp; list, root signature, constant buffer, resource barriers, swap chain and a GPU fence.</li>
-      <li>Textured <strong>Lambert lighting in HLSL</strong> vertex + pixel shaders, a perspective camera and a rotating model updated through the constant buffer every frame.</li>
-      <li>Split into init / update / render / wait-for-GPU units with a step-by-step README, so anyone can build it in Visual Studio.</li>
-    </ul>
-    <div class="links">
-      <a href="https://github.com/Amirchoudhary09/Cube_by_dx12" target="_blank" rel="noopener">GitHub ↗</a>
-      <a href="https://github.com/Amirchoudhary09/Cone_through_DX12" target="_blank" rel="noopener">Cone variant ↗</a>
-    </div>
-  </article>
-  <article class="card rv tilt">
-    <div class="glow"></div>
-    <div class="card__img">
-      <img src="img/gemini-agent.webp" alt="Terminal session of the Gemini coding agent creating a project step by step, next to its plan-execute-validate loop" width="1200" height="670" loading="lazy" decoding="async">
-    </div>
-    <h3>Gemini Function-Calling Agents</h3>
-    <p class="stack">Node.js · @google/genai · Gemini 2.5 Flash · function calling</p>
-    <ul>
-      <li>A <strong>tool-using assistant</strong>: Gemini decides when to call <code>sum</code>, <code>prime</code>, live crypto prices (CoinGecko) or weather (OpenWeather); the agent loop feeds every tool result back into the conversation until the model answers.</li>
-      <li>A <strong>terminal coding agent</strong> (Cursor-style): one <code>executeCommand</code> tool plus a PLAN → EXECUTE → VALIDATE system prompt that scaffolds a whole frontend project with OS-aware shell commands, reading each file back to verify it.</li>
-      <li>Multi-turn chat with hand-managed history versus the SDK's built-in chat session, as a reference for the basics.</li>
-    </ul>
-    <div class="links">
-      <a href="https://github.com/Amirchoudhary09/gen-ai" target="_blank" rel="noopener">GitHub ↗</a>
-      <a href="https://github.com/Amirchoudhary09/dsa_instructor" target="_blank" rel="noopener">Chatbot variant ↗</a>
-    </div>
-  </article>
-  <article class="card rv tilt">
-    <div class="glow"></div>
-    <div class="card__img">
-      <img src="img/trip_planner.webp" alt="AI Trip Planner — route map with a day-by-day itinerary" width="1024" height="1024" loading="lazy" decoding="async">
-    </div>
-    <h3>AI Trip Planner</h3>
-    <p class="stack">React.js · Vite · Firebase · Gemini AI</p>
-    <ul>
-      <li>An intelligent travel itinerary generator that crafts customized schedules including lodging, meals, and safety integration.</li>
-      <li>Uses <strong>Gemini AI</strong> to build personalized travel plans based on user preferences and constraints.</li>
-    </ul>
-    <div class="links">
-      <a href="https://enchantress-trips-planner.vercel.app/" target="_blank" rel="noopener">Live ↗</a>
-      <a href="https://github.com/Amirchoudhary09/Travel-Itinerary-Planner-" target="_blank" rel="noopener">GitHub ↗</a>
-    </div>
-  </article>
-</div>
-
-</div>
-</div>
-</section>
-
-<!-- ============ 04 · Skills ============ -->
-<section class="slide" id="skills" aria-label="Skills">
-<div class="slide__inner">
-<div class="wrap">
-
-<div class="head rv"><em>03</em><h2>Technical Skills</h2><div class="rule"></div></div>
-<div class="skills">
-  <div class="sk rv"><h4>Languages</h4><div class="chips"><span class="chip">JavaScript</span><span class="chip">TypeScript</span><span class="chip">Python</span><span class="chip">C++</span><span class="chip">SQL</span><span class="chip">HLSL</span></div></div>
-  <div class="sk rv"><h4>Graphics</h4><div class="chips"><span class="chip">DirectX 12</span><span class="chip">DirectX 9</span><span class="chip">Shaders</span><span class="chip">Render Pipelines</span><span class="chip">GPU Profiling</span></div></div>
-  <div class="sk rv"><h4>Frontend</h4><div class="chips"><span class="chip">React.js</span><span class="chip">Next.js</span><span class="chip">Redux</span><span class="chip">Tailwind CSS</span><span class="chip">React Query</span></div></div>
-  <div class="sk rv"><h4>Backend</h4><div class="chips"><span class="chip">Node.js</span><span class="chip">Express.js</span><span class="chip">REST APIs</span><span class="chip">JWT</span><span class="chip">OAuth 2.0</span><span class="chip">Mongoose</span><span class="chip">WebSockets</span><span class="chip">Zod</span></div></div>
-  <div class="sk rv"><h4>Databases</h4><div class="chips"><span class="chip">MongoDB Atlas</span><span class="chip">MySQL</span></div></div>
-  <div class="sk rv"><h4>Generative AI</h4><div class="chips"><span class="chip">Gemini API</span><span class="chip">OpenAI API</span><span class="chip">LangChain</span><span class="chip">RAG</span><span class="chip">Prompt Engineering</span></div></div>
-  <div class="sk rv"><h4>Tools</h4><div class="chips"><span class="chip">Git</span><span class="chip">GitHub</span><span class="chip">Postman</span><span class="chip">VS Code</span><span class="chip">Vercel</span><span class="chip">Railway</span></div></div>
-  <div class="sk rv"><h4>Core CS</h4><div class="chips"><span class="chip">DSA</span><span class="chip">OOP</span><span class="chip">DBMS</span><span class="chip">System Design</span><span class="chip">Operating Systems</span><span class="chip">Networks</span></div></div>
-</div>
-
-</div>
-</div>
-</section>
-
-<!-- ============ 05 · Achievements ============ -->
-<section class="slide" id="awards" aria-label="Achievements">
-<div class="slide__inner">
-<div class="wrap">
-
-<div class="head rv"><em>04</em><h2>Achievements</h2><div class="rule"></div></div>
-<div class="aw">
-  <div class="awi rv"><b>900+</b><p>DSA problems solved across <strong><a href="https://leetcode.com/u/AMIR09/" target="_blank" rel="noopener">LeetCode</a></strong> (max rating <strong>1600</strong>) and <strong><a href="https://www.geeksforgeeks.org/profile/amirchoudharyb09" target="_blank" rel="noopener">GeeksforGeeks</a></strong>.</p></div>
-  <div class="awi rv"><b>Top 3</b><p><strong>Adobe Emerge Hackathon 2025</strong> — IIT Delhi, national-level competition.</p></div>
-  <div class="awi rv"><b>Top 6</b><p><strong>Hack For Impact 2025</strong> — IIIT Delhi.</p></div>
-  <div class="awi rv"><b>Top 10</b><p><strong>HackSprint Hackathon 2024</strong> — GDG, GL Bajaj.</p></div>
-</div>
-
-</div>
-</div>
-</section>
-
-<!-- ============ 06 · Certificates ============ -->
-<section class="slide" id="certs" aria-label="Certificates">
-<div class="slide__inner">
-<div class="wrap">
-
-<div class="head rv"><em>05</em><h2>Certifications</h2><div class="rule"></div></div>
-<div class="grid certs">
-  <a class="cert rv" href="https://drive.google.com/file/d/11qD4lFmx5ene2OOl3Qewo5CIj8wLhSnx/view" target="_blank" rel="noopener">
-    <span class="when">June 2024</span><h3>Google for Developers — Virtual Internship</h3><p>Google</p><span class="go">View certificate ↗</span>
-  </a>
-  <a class="cert rv" href="https://drive.google.com/file/d/1kfajoUAN52OaLUho9O7idFqfGcsFpfsi/view" target="_blank" rel="noopener">
-    <span class="when">May 2025</span><h3>CCNA / Python Certification</h3><p>Cisco</p><span class="go">View certificate ↗</span>
-  </a>
-  <a class="cert rv" href="https://drive.google.com/file/d/12Dv3mIIqi3RQFFh2FEq3JgQHNQ-UHbrZ/view" target="_blank" rel="noopener">
-    <span class="when">Jan 2025</span><h3>Web Development Competition</h3><p>See Caller · Inter-college competition</p><span class="go">View certificate ↗</span>
-  </a>
-  <a class="cert rv" href="https://drive.google.com/file/d/122bhjR_y1Xx8tllvPd7Rm457Bw8lD9z-/view" target="_blank" rel="noopener">
-    <span class="when">Nov 2024</span><h3>Coding Competition</h3><p>HackSprint, GDG GL Bajaj</p><span class="go">View certificate ↗</span>
-  </a>
-</div>
-
-</div>
-</div>
-</section>
-
-<!-- ============ 07 · Activity & AI ============ -->
-<section class="slide" id="activity" aria-label="Activity &amp; AI">
-<div class="slide__inner">
-<div class="wrap">
-
-<div class="head rv"><em>06</em><h2>GitHub Activity</h2><div class="rule"></div></div>
-<p class="rv sub">My code statistics and contribution visualizer</p>
-<div class="grid gh">
-  <div class="card rv tilt gh__card">
-    <h3>General Stats</h3>
-    <img src="https://github-profile-summary-cards.vercel.app/api/cards/stats?username=Amirchoudhary09&theme=github_dark&hide_logo=true&bg_color=05060a00&title_color=22d3ee&text_color=a8b0c2&icon_color=7c5cff&border_color=00000000" alt="Amir's GitHub stats card" width="400" height="200" loading="lazy" decoding="async" onerror="this.closest('.gh__card').classList.add('gh__card--off')">
-  </div>
-  <div class="card rv tilt gh__card">
-    <h3>Streak Count</h3>
-    <!-- streak-stats.demolab.com is the maintained host of github-readme-streak-stats (the herokuapp one is dead) -->
-    <img src="https://streak-stats.demolab.com/?user=Amirchoudhary09&theme=dracula&hide_border=true&background=05060a00&ring=7c5cff&fire=22d3ee&currStreakNum=eef1f8" alt="Amir's GitHub contribution streak" width="495" height="195" loading="lazy" decoding="async" onerror="this.closest('.gh__card').classList.add('gh__card--off')">
-  </div>
-  <div class="card rv tilt gh__card gh__card--wide">
-    <h3>Contributions Calendar</h3>
-    <div class="gh__cal">
-      <img src="https://ghchart.rshah.org/7c5cff/Amirchoudhary09" alt="Amir's GitHub contributions calendar for the last year" width="663" height="104" loading="lazy" decoding="async" onerror="this.closest('.gh__card').classList.add('gh__card--off')">
-    </div>
-  </div>
-</div>
-
-<div class="head rv gap"><em>07</em><h2>Try Amir.AI</h2><div class="rule"></div></div>
-<p class="rv sub">A little shell that knows this portfolio — ask it anything, or press the buttons.</p>
-
-<div class="terminal rv tilt" id="ai-terminal">
-  <div class="term-header">
-     <div class="dots" aria-hidden="true"><span class="dot red"></span><span class="dot yel"></span><span class="dot grn"></span></div>
-     <div class="term-title">amir-ai-shell v1.1.0 (bash)</div>
-     <div class="term-status">ONLINE</div>
-  </div>
-  <div class="term-body" id="ai-body">
-    <div class="term-line sys">[SYSTEM] Initialize Amir AI Engine... SUCCESS</div>
-    <div class="term-line sys">[SYSTEM] Load user profile: 'Amir Choudhary'... SUCCESS</div>
-    <div class="term-line info"><br>Welcome to the interactive portfolio helper!</div>
-    <div class="term-line info">Type <span class="cmd">help</span> to list commands, <span class="cmd">Tab</span> to autocomplete, <span class="cmd">↑</span> for history.</div>
-    <div class="quick-btns" id="ai-btns">
-      <button class="qb" data-cmd="about">About Me</button>
-      <button class="qb" data-cmd="skills">Tech Stack</button>
-      <button class="qb" data-cmd="projects">Projects</button>
-      <button class="qb" data-cmd="experience">Experience</button>
-      <button class="qb" data-cmd="hackathons">Hackathons</button>
-      <button class="qb" data-cmd="resume">Resume</button>
-      <button class="qb" data-cmd="contact">Contact</button>
-      <button class="qb" data-cmd="matrix">Matrix Rain</button>
-      <button class="qb" data-cmd="clear">Clear</button>
-    </div>
-    <div class="term-history" id="ai-history" role="log" aria-live="polite"></div>
-    <div class="term-input-line">
-       <label class="prompt" for="ai-input">visitor@amir-ai:~$</label>
-       <input type="text" id="ai-input" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="Type a command (e.g. help, projects, goto contact)…">
-    </div>
-  </div>
-</div>
-
-</div>
-</div>
-</section>
-
-<!-- ============ 08 · Contact ============ -->
-<section class="slide" id="contact" aria-label="Contact">
-<div class="slide__inner">
-<div class="wrap contact">
-
-<div class="contact-wrapper rv tilt">
-  <h2 class="contact-title">Get in Touch</h2>
-  <p class="contact-sub">Let's build something extraordinary together</p>
-
-  <div class="contact-grid">
-    <div class="contact-info-col">
-      <h3>Connect with Me</h3>
-      <p>Have an exciting project idea, an SDE opportunity, or want to talk low-level graphics and DirectX / WebGL pipelines? My inbox is always open — drop a message!</p>
-
-      <a href="mailto:amirchoudharyb03@gmail.com" class="c-block">
-        <span class="c-icon">
-          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" aria-hidden="true"><path d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
-        </span>
-        <span class="c-details"><span>Email Me</span><strong>amirchoudharyb03@gmail.com</strong></span>
-      </a>
-
-      <!-- the number is only put on the page when someone asks for it (keeps it off scrapers) -->
-      <button type="button" class="c-block c-reveal" id="reveal-phone">
-        <span class="c-icon">
-          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" aria-hidden="true"><path d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path></svg>
-        </span>
-        <span class="c-details"><span>Call Me</span><strong>Click to reveal number</strong></span>
-      </button>
-
-      <div class="c-block">
-        <span class="c-icon">
-          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" aria-hidden="true"><path d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
-        </span>
-        <span class="c-details"><span>Location</span><strong>Greater Noida, India</strong></span>
+<!-- ===== 00 · TITLE SCREEN ===== -->
+<section class="screen" id="start" aria-label="Title screen">
+  <div class="wrap title">
+    <div>
+      <div class="press" aria-hidden="true">▶ PRESS START · NOIDA, INDIA</div>
+      <h1 class="hero-name">Amir<br><span class="alt">Choudhary</span></h1>
+      <div class="class"><i></i> Class: Graphics Engineer · Lv. 2026</div>
+      <p class="typed" id="typed">Software Development Engineer @ Wasp3D</p>
+      <p class="lede">I build things that have to be fast: real-time rendering pipelines in C++ / DirectX 12 at Wasp3D, and scalable MERN applications with clean APIs, secure auth and AI integrations.</p>
+      <div class="cta">
+        <a class="btn solid" href="#levels">▶ Select level</a>
+        <a class="btn" href="Amir-Choudhary-Resume.pdf" target="_blank" rel="noopener">↓ Résumé (PDF)</a>
+        <a class="btn mag" href="#coop">Join party</a>
       </div>
-
-      <a href="Amir-Choudhary-Resume.pdf" class="c-block" target="_blank" rel="noopener">
-        <span class="c-icon">
-          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" aria-hidden="true"><path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
-        </span>
-        <span class="c-details"><span>Résumé</span><strong>View / download PDF</strong></span>
-      </a>
-
-      <div class="c-socials">
-        <a href="https://linkedin.com/in/amirchoudhary09" target="_blank" rel="noopener" class="c-soc" aria-label="LinkedIn" title="LinkedIn"><svg fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.762 2.239 5 5 5h14c2.762 0 5-2.238 5-5v-14c0-2.761-2.239-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg></a>
-        <a href="https://github.com/Amirchoudhary09" target="_blank" rel="noopener" class="c-soc" aria-label="GitHub" title="GitHub"><svg fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg></a>
-        <a href="https://leetcode.com/u/AMIR09/" target="_blank" rel="noopener" class="c-soc" aria-label="LeetCode" title="LeetCode"><span class="txt">LC</span></a>
-        <a href="https://www.geeksforgeeks.org/profile/amirchoudharyb09" target="_blank" rel="noopener" class="c-soc" aria-label="GeeksforGeeks" title="GeeksforGeeks"><span class="txt">GfG</span></a>
+      <div class="party">
+        <a href="https://github.com/Amirchoudhary09" target="_blank" rel="noopener"><b>GH</b>Amirchoudhary09</a>
+        <a href="https://linkedin.com/in/amirchoudhary09" target="_blank" rel="noopener"><b>IN</b>amirchoudhary09</a>
+        <a href="https://leetcode.com/u/AMIR09/" target="_blank" rel="noopener"><b>LC</b>AMIR09 · 1600</a>
+        <a href="https://www.geeksforgeeks.org/profile/amirchoudharyb09" target="_blank" rel="noopener"><b>GfG</b>amirchoudharyb09</a>
       </div>
     </div>
 
-    <div class="contact-form-col">
-      <!-- without JS the browser hands the fields to the mail app; form.js does the same with a nicer message -->
-      <form id="contact-form" action="mailto:amirchoudharyb03@gmail.com" method="post" enctype="text/plain">
-        <div class="f-row">
-          <label><span>Your Name</span><input type="text" name="name" placeholder="Enter name" autocomplete="name" required></label>
-          <label><span>Your Email</span><input type="email" name="email" placeholder="Enter email" autocomplete="email" required></label>
+    <aside class="panel pcard" aria-label="Player card">
+      <div class="pcard__top"><span>Player 1</span><b>★ SDE @ Wasp3D</b></div>
+      <div class="avatar">
+        <img src="img/profile.webp" alt="Illustrated portrait of Amir Choudhary" width="720" height="720">
+        <div class="rank">RANK: GRAPHICS ENGINEER<small>B.Tech CS (AI &amp; ML) · CGPA 8.01</small></div>
+      </div>
+      <div class="bars">
+        <div class="bar"><b>GFX</b><i style="--w:92%;--c:var(--cyan)"></i><em>92</em></div>
+        <div class="bar"><b>WEB</b><i style="--w:86%;--c:var(--mag)"></i><em>86</em></div>
+        <div class="bar"><b>DSA</b><i style="--w:90%;--c:var(--lime)"></i><em>90</em></div>
+        <div class="bar"><b>AI</b><i style="--w:78%;--c:var(--gold)"></i><em>78</em></div>
+      </div>
+    </aside>
+  </div>
+</section>
+
+<!-- ===== 01 · STATS ===== -->
+<section class="screen" id="stats" aria-label="Player stats">
+  <div class="wrap">
+    <div class="shead"><span class="tag">01 / Stats</span><h2>Player HUD</h2>
+      <p>SDE at Wasp3D on the rendering side of a real-time graphics engine: planar reflections, water simulation, HLSL shaders and GPU resource management in C++ / DirectX 12. Before that, full-stack MERN products with REST APIs, JWT and OAuth auth, and AI integrations. Both halves come down to the same thing: make it correct, then make it fast.</p>
+    </div>
+
+    <div class="stats rv">
+      <div class="stat"><small>XP · problems</small><b class="l" data-to="900" data-suf="+">0</b><span>DSA problems solved</span></div>
+      <div class="stat"><small>Buff · bandwidth</small><b class="c" data-to="50" data-suf="%">0</b><span>GPU bandwidth saved</span></div>
+      <div class="stat"><small>Party · users</small><b class="m" data-to="200" data-suf="+">0</b><span>AshGuard active users</span></div>
+      <div class="stat"><small>Rank · national</small><b class="g" data-to="3" data-pre="Top ">0</b><span>Adobe Emerge, IIT Delhi</span></div>
+    </div>
+
+    <div class="statrow">
+      <div class="panel attrs rv">
+        <h3>Attributes</h3>
+        <div class="attr"><b>C++ / DirectX 12<small>STR · engine core</small></b><div class="pips" style="--c:var(--cyan)" data-fill="9"></div><em>9/10</em></div>
+        <div class="attr"><b>HLSL shaders<small>MAG · spells</small></b><div class="pips" style="--c:var(--violet)" data-fill="8"></div><em>8/10</em></div>
+        <div class="attr"><b>React / Node (MERN)<small>DEX · full-stack</small></b><div class="pips" style="--c:var(--mag)" data-fill="8"></div><em>8/10</em></div>
+        <div class="attr"><b>DSA &amp; problem solving<small>INT · 900+ solved</small></b><div class="pips" style="--c:var(--lime)" data-fill="9"></div><em>9/10</em></div>
+        <div class="attr"><b>Gen-AI integrations<small>WIS · Gemini, RAG</small></b><div class="pips" style="--c:var(--gold)" data-fill="7"></div><em>7/10</em></div>
+        <div class="attr"><b>System design<small>CON · scale</small></b><div class="pips" style="--c:var(--cyan)" data-fill="7"></div><em>7/10</em></div>
+      </div>
+
+      <div class="panel spell rv">
+        <h3>Equipped spell</h3>
+        <figure>
+          <figcaption><i></i><i></i><i></i> water.hlsl · planar reflection pass</figcaption>
+<pre><code><span class="cm">// two RTs packed into one — half the bandwidth</span>
+<span class="t">float2</span> uv   = i.screenUV + <span class="f">Ripple</span>(i.wpos, time);
+<span class="t">float3</span> refl = ReflectionRT.<span class="f">Sample</span>(s, uv).rgb;
+<span class="t">float</span>  f    = <span class="f">Fresnel</span>(i.N, viewDir, <span class="n">0.02</span>);
+<span class="k">return</span> <span class="t">float4</span>(<span class="f">lerp</span>(waterTint, refl, f), <span class="n">1</span>);</code></pre>
+        </figure>
+        <p class="lore">Shipped inside the Wasp3D engine. Reflection pipeline went from two render targets to one at identical visual quality.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== 02 · QUESTS ===== -->
+<section class="screen" id="quests" aria-label="Quest log">
+  <div class="wrap">
+    <div class="shead"><span class="tag">02 / Quests</span><h2>Quest Log</h2></div>
+    <div class="quests">
+
+      <article class="panel quest rv">
+        <div class="quest__meta">
+          <span class="st active">MAIN · ACTIVE</span>
+          <time>Apr 2026 — present</time>
+          <span class="diff" aria-label="Difficulty 5 of 5">★★★★★</span>
         </div>
-        <label><span>Subject</span><input type="text" name="subject" placeholder="Collaboration proposal" required></label>
-        <label><span>Your Message</span><textarea name="message" rows="5" placeholder="Let's build something..." required></textarea></label>
-        <!-- honeypot: people never see it, bots fill it and get dropped -->
-        <label class="hp" aria-hidden="true"><span>Leave this empty</span><input type="text" name="_honey" tabindex="-1" autocomplete="off"></label>
-        <button type="submit" class="btn-send"><span class="btn-send__label">Send Message</span> <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path></svg></button>
-        <p class="form__status" role="status" aria-live="polite"></p>
+        <div class="quest__body">
+          <h3>Software Development Engineer</h3>
+          <p class="org">Wasp3D · Noida, India · onsite</p>
+          <ul>
+            <li>Optimized the planar reflection pipeline by reducing render targets from <strong>2 to 1</strong>, cutting GPU memory bandwidth by <strong>~50%</strong> while preserving visual quality via render-target packing.</li>
+            <li>Implemented real-time water rendering: <strong>ripple simulation, flow-map animation, distortion and planar reflections</strong>, improving stability and visual fidelity by <strong>30%</strong>.</li>
+            <li>Developed and debugged <strong>HLSL vertex and pixel shaders</strong>, cutting reflection, lighting, material and texture-sampling defects by <strong>40%</strong>.</li>
+            <li>Optimized engine components in <strong>C++ and DirectX 9/12</strong>: render targets, textures, GPU resource management, for a <strong>20%</strong> gain in performance.</li>
+          </ul>
+          <div class="loot"><span>+50% bandwidth</span><span>+30% fidelity</span><span>−40% shader defects</span><span class="g">Planar reflections unlocked</span></div>
+        </div>
+      </article>
+
+      <article class="panel quest rv">
+        <div class="quest__meta">
+          <span class="st done">SIDE · DONE</span>
+          <time>Mar — May 2025</time>
+          <span class="diff" aria-label="Difficulty 3 of 5">★★★☆☆</span>
+        </div>
+        <div class="quest__body">
+          <h3>Software Development Engineer Intern</h3>
+          <p class="org">Bluestocks Fintech · remote</p>
+          <ul>
+            <li>Built a responsive Services page in <strong>React.js + Tailwind CSS</strong> with a modular component architecture, improving page load performance by <strong>20%</strong>; shipped full <strong>CRUD REST APIs</strong> with Express.js and MongoDB.</li>
+            <li>Tested APIs in <strong>Postman</strong> with proper error handling, status codes and edge-case validation.</li>
+            <li>Worked in <strong>Agile sprints</strong>, presenting features to stakeholders in bi-weekly demos.</li>
+          </ul>
+          <div class="loot"><span>+20% page load</span><span class="g">REST APIs unlocked</span></div>
+        </div>
+      </article>
+
+      <article class="panel quest rv">
+        <div class="quest__meta">
+          <span class="st done">ORIGIN · 2022–26</span>
+          <time>CGPA 8.01 / 10</time>
+          <span class="diff" aria-label="Difficulty 4 of 5">★★★★☆</span>
+        </div>
+        <div class="quest__body">
+          <h3>B.Tech, Computer Science — AI &amp; Machine Learning</h3>
+          <p class="org">G.L. Bajaj Institute of Technology and Management · Greater Noida</p>
+          <ul>
+            <li>Tutorial zone: DSA, OOP, DBMS, operating systems, networks, system design. Solving problems most days since.</li>
+          </ul>
+          <div class="loot"><span class="g">Degree (finishing 2026)</span></div>
+        </div>
+      </article>
+
+    </div>
+  </div>
+</section>
+
+<!-- ===== 03 · LEVELS ===== -->
+<section class="screen" id="levels" aria-label="Level select">
+  <div class="wrap">
+    <div class="shead"><span class="tag">03 / Levels</span><h2>Select Level</h2><p>Six shipped builds. Press PLAY for the live deployment, SOURCE for the repository.</p></div>
+    <div class="levels">
+
+      <article class="panel level rv tilt">
+        <div class="thumb">
+          <img src="img/ashguard.webp" alt="AshGuard dashboard: live location map, SOS button, safe route finder and emergency contacts" width="1200" height="670" loading="lazy">
+          <span class="num">LV 01</span><span class="badge live">Live · 200+ users</span>
+        </div>
+        <div class="level__body">
+          <div class="diffrow"><span>Boss fight</span><b aria-label="Difficulty 5 of 5">★★★★★</b></div>
+          <h3>AshGuard — Women Safety &amp; Travel Assistant</h3>
+          <p>AI-powered safety web app with <strong>1-Tap SOS</strong> (fake call, live recording, guardian alert, police dial, siren), live location tracking and a <strong>Safe Route Finder</strong> using K-Means clustering on crime data at <strong>93% route accuracy</strong>. Gemini chatbot, JWT auth, deployed on Vercel and Railway.</p>
+          <div class="load"><span>React</span><span>Python</span><span>Express</span><span>MongoDB Atlas</span><span>Gemini AI</span><span>K-Means</span></div>
+          <div class="acts"><a class="play" href="https://enchantress-ashguard.vercel.app/" target="_blank" rel="noopener">▶ Play</a><a href="https://github.com/Amirchoudhary09/ASHGUARD" target="_blank" rel="noopener">Source</a></div>
+        </div>
+      </article>
+
+      <article class="panel level rv tilt">
+        <div class="thumb">
+          <img src="img/lostandfound.webp" alt="Lost and Found platform: found-item cards with search filters and matching results" width="1200" height="670" loading="lazy">
+          <span class="num">LV 02</span><span class="badge live">Live</span>
+        </div>
+        <div class="level__body">
+          <div class="diffrow"><span>Co-op</span><b aria-label="Difficulty 4 of 5">★★★★☆</b></div>
+          <h3>Lost &amp; Found Community Platform</h3>
+          <p>Full-stack MERN app with image uploads, location tagging, AI-powered filtering and a matching algorithm that suggests item matches. REST APIs secured by <strong>JWT and OAuth 2.0 (Google Sign-In)</strong>; query optimization delivered <strong>40% faster search</strong>.</p>
+          <div class="load"><span>React</span><span>Node</span><span>Express</span><span>MongoDB</span><span>OAuth 2.0</span></div>
+          <div class="acts"><a class="play" href="https://lost-and-find-ytbs.vercel.app/" target="_blank" rel="noopener">▶ Play</a><a href="https://github.com/Amirchoudhary09/lost-and-find" target="_blank" rel="noopener">Source</a></div>
+        </div>
+      </article>
+
+      <article class="panel level rv tilt">
+        <div class="thumb">
+          <canvas class="water" id="water" role="img" aria-label="Interactive water demo: waves, cursor ripples and reflections"></canvas>
+          <span class="num">LV 03</span><span class="badge boss">Engine · Wasp3D</span>
+          <span class="hint">move cursor → ripples</span>
+        </div>
+        <div class="level__body">
+          <div class="diffrow"><span>Final boss</span><b aria-label="Difficulty 5 of 5">★★★★★</b></div>
+          <h3>Real-time Water &amp; Planar Reflections</h3>
+          <p>Ripple simulation, flow-map animation, distortion and <strong>planar reflections</strong> shipped inside a production real-time graphics engine. Two reflection render targets packed into one: <strong>~50% less GPU bandwidth</strong> at identical quality. The canvas above sketches the idea: waves + ripples → normals → Fresnel-weighted reflection.</p>
+          <div class="load"><span>C++</span><span>DirectX 12</span><span>HLSL</span><span>Render targets</span></div>
+          <div class="acts"><span>Proprietary engine</span><a href="#stats">Shader</a><a href="#quests">Role</a></div>
+        </div>
+      </article>
+
+      <article class="panel level rv tilt">
+        <div class="thumb">
+          <img src="img/dx12-cube.webp" alt="A textured earth cube and a wireframe cone rendered with DirectX 12" width="1200" height="670" loading="lazy">
+          <span class="num">LV 04</span><span class="badge lab">Lab</span>
+        </div>
+        <div class="level__body">
+          <div class="diffrow"><span>Dungeon</span><b aria-label="Difficulty 4 of 5">★★★★☆</b></div>
+          <h3>DirectX 12 Procedural Mesh Renderer</h3>
+          <p>Procedural <strong>cube and cone meshes</strong> generated at runtime, drawn through a hand-rolled DX12 pipeline: command allocator and list, root signature, constant buffer, resource barriers, swap chain and a GPU fence. Textured <strong>Lambert lighting in HLSL</strong>, perspective camera, rotating model each frame.</p>
+          <div class="load"><span>C++</span><span>DirectX 12</span><span>Win32</span><span>HLSL</span></div>
+          <div class="acts"><a class="play" href="https://github.com/Amirchoudhary09/Cube_by_dx12" target="_blank" rel="noopener">▶ Source</a><a href="https://github.com/Amirchoudhary09/Cone_through_DX12" target="_blank" rel="noopener">Cone variant</a></div>
+        </div>
+      </article>
+
+      <article class="panel level rv tilt">
+        <div class="thumb">
+          <img src="img/gemini-agent.webp" alt="Terminal session of the Gemini coding agent creating a project step by step" width="1200" height="670" loading="lazy">
+          <span class="num">LV 05</span><span class="badge lab">Lab · agents</span>
+        </div>
+        <div class="level__body">
+          <div class="diffrow"><span>Summoner</span><b aria-label="Difficulty 4 of 5">★★★★☆</b></div>
+          <h3>Gemini Function-Calling Agents</h3>
+          <p>A <strong>tool-using assistant</strong> where Gemini decides when to call sum, prime, live crypto prices (CoinGecko) or weather (OpenWeather), looping tool results back until it answers. Plus a <strong>terminal coding agent</strong> with a PLAN → EXECUTE → VALIDATE prompt that scaffolds a whole frontend project with OS-aware shell commands.</p>
+          <div class="load"><span>Node.js</span><span>@google/genai</span><span>Gemini 2.5 Flash</span><span>Function calling</span></div>
+          <div class="acts"><a class="play" href="https://github.com/Amirchoudhary09/gen-ai" target="_blank" rel="noopener">▶ Source</a><a href="https://github.com/Amirchoudhary09/dsa_instructor" target="_blank" rel="noopener">Chatbot variant</a></div>
+        </div>
+      </article>
+
+      <article class="panel level rv tilt">
+        <div class="thumb">
+          <img src="img/trip_planner.webp" alt="AI Trip Planner: route map with a day-by-day itinerary" width="1024" height="1024" loading="lazy">
+          <span class="num">LV 06</span><span class="badge live">Live</span>
+        </div>
+        <div class="level__body">
+          <div class="diffrow"><span>Explorer</span><b aria-label="Difficulty 3 of 5">★★★☆☆</b></div>
+          <h3>AI Trip Planner</h3>
+          <p>An intelligent travel itinerary generator that crafts customized schedules including lodging, meals and safety integration. Uses <strong>Gemini AI</strong> to build personalized plans from user preferences and constraints.</p>
+          <div class="load"><span>React</span><span>Vite</span><span>Firebase</span><span>Gemini AI</span></div>
+          <div class="acts"><a class="play" href="https://enchantress-trips-planner.vercel.app/" target="_blank" rel="noopener">▶ Play</a><a href="https://github.com/Amirchoudhary09/Travel-Itinerary-Planner-" target="_blank" rel="noopener">Source</a></div>
+        </div>
+      </article>
+
+    </div>
+  </div>
+</section>
+
+<!-- ===== 04 · INVENTORY ===== -->
+<section class="screen" id="inventory" aria-label="Inventory">
+  <div class="wrap">
+    <div class="shead"><span class="tag">04 / Inventory</span><h2>Skill Inventory</h2><p>Rarity marks how central the item is to the build, not how hard it is to learn.</p></div>
+    <div class="inv">
+      <div class="slot leg rv"><h4>Graphics <small>LEGENDARY</small></h4><div class="items"><span>DirectX 12</span><span>DirectX 9</span><span>HLSL Shaders</span><span>Render Pipelines</span><span>GPU Profiling</span></div></div>
+      <div class="slot leg rv"><h4>Languages <small>LEGENDARY</small></h4><div class="items"><span>C++</span><span>JavaScript</span><span>TypeScript</span><span>Python</span><span>SQL</span><span>HLSL</span></div></div>
+      <div class="slot epic rv"><h4>Frontend <small>EPIC</small></h4><div class="items"><span>React.js</span><span>Next.js</span><span>Redux</span><span>Tailwind CSS</span><span>React Query</span></div></div>
+      <div class="slot epic rv"><h4>Backend <small>EPIC</small></h4><div class="items"><span>Node.js</span><span>Express.js</span><span>REST APIs</span><span>JWT</span><span>OAuth 2.0</span><span>Mongoose</span><span>WebSockets</span><span>Zod</span></div></div>
+      <div class="slot rare rv"><h4>Generative AI <small>RARE</small></h4><div class="items"><span>Gemini API</span><span>OpenAI API</span><span>LangChain</span><span>RAG</span><span>Prompt Engineering</span></div></div>
+      <div class="slot rare rv"><h4>Databases <small>RARE</small></h4><div class="items"><span>MongoDB Atlas</span><span>MySQL</span></div></div>
+      <div class="slot common rv"><h4>Core CS <small>CORE</small></h4><div class="items"><span>DSA</span><span>OOP</span><span>DBMS</span><span>System Design</span><span>Operating Systems</span><span>Networks</span></div></div>
+      <div class="slot common rv"><h4>Tools <small>CORE</small></h4><div class="items"><span>Git</span><span>GitHub</span><span>Postman</span><span>VS Code</span><span>Vercel</span><span>Railway</span></div></div>
+    </div>
+    <div class="rarity"><span><i style="background:var(--gold)"></i>Legendary</span><span><i style="background:var(--violet)"></i>Epic</span><span><i style="background:var(--cyan)"></i>Rare</span><span><i style="background:var(--lime)"></i>Core</span></div>
+  </div>
+</section>
+
+<!-- ===== 05 · TROPHIES ===== -->
+<section class="screen" id="trophies" aria-label="Trophies">
+  <div class="wrap">
+    <div class="shead"><span class="tag">05 / Trophies</span><h2>Achievements</h2></div>
+    <div class="trophies">
+      <div class="trophy plat rv">
+        <div class="cup"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m8.5 8-5 4 5 4"/><path d="m15.5 8 5 4-5 4"/><path d="m13.5 4-3 16"/></svg></div>
+        <b>900+</b>
+        <p>DSA problems solved across <strong><a href="https://leetcode.com/u/AMIR09/" target="_blank" rel="noopener">LeetCode</a></strong> (max rating <strong>1600</strong>) and <strong><a href="https://www.geeksforgeeks.org/profile/amirchoudharyb09" target="_blank" rel="noopener">GeeksforGeeks</a></strong>.</p>
+        <div class="unl">Platinum · unlocked</div>
+      </div>
+      <div class="trophy gold rv">
+        <div class="cup"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 4h10v5a5 5 0 0 1-10 0z"/><path d="M7 5.5H4V7a3.5 3.5 0 0 0 3.5 3.5"/><path d="M17 5.5h3V7a3.5 3.5 0 0 1-3.5 3.5"/><path d="M12 14v3.5"/><path d="M8.5 20.5h7"/><path d="M9.5 17.5h5l1 3h-7z"/></svg></div>
+        <b>Top 3</b>
+        <p><strong>Adobe Emerge Hackathon 2025</strong>, IIT Delhi. National-level competition.</p>
+        <div class="unl">Gold · unlocked 2025</div>
+      </div>
+      <div class="trophy silver rv">
+        <div class="cup"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 4h10v5a5 5 0 0 1-10 0z"/><path d="M7 5.5H4V7a3.5 3.5 0 0 0 3.5 3.5"/><path d="M17 5.5h3V7a3.5 3.5 0 0 1-3.5 3.5"/><path d="M12 14v3.5"/><path d="M8.5 20.5h7"/><path d="M9.5 17.5h5l1 3h-7z"/></svg></div>
+        <b>Top 6</b>
+        <p><strong>Hack For Impact 2025</strong>, IIIT Delhi.</p>
+        <div class="unl">Silver · unlocked 2025</div>
+      </div>
+      <div class="trophy bronze rv">
+        <div class="cup"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 4h10v5a5 5 0 0 1-10 0z"/><path d="M7 5.5H4V7a3.5 3.5 0 0 0 3.5 3.5"/><path d="M17 5.5h3V7a3.5 3.5 0 0 1-3.5 3.5"/><path d="M12 14v3.5"/><path d="M8.5 20.5h7"/><path d="M9.5 17.5h5l1 3h-7z"/></svg></div>
+        <b>Top 10</b>
+        <p><strong>HackSprint Hackathon 2024</strong>, GDG, GL Bajaj.</p>
+        <div class="unl">Bronze · unlocked 2024</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== 06 · BADGES ===== -->
+<section class="screen" id="badges" aria-label="Badges">
+  <div class="wrap">
+    <div class="shead"><span class="tag">06 / Badges</span><h2>Certifications</h2></div>
+    <div class="badges">
+      <a class="cert rv" href="https://drive.google.com/file/d/11qD4lFmx5ene2OOl3Qewo5CIj8wLhSnx/view" target="_blank" rel="noopener">
+        <div class="hex">GDG</div><div><time>June 2024</time><h3>Google for Developers — Virtual Internship</h3><p>Google</p></div><span class="go">View ↗</span>
+      </a>
+      <a class="cert rv" href="https://drive.google.com/file/d/1kfajoUAN52OaLUho9O7idFqfGcsFpfsi/view" target="_blank" rel="noopener">
+        <div class="hex">CSCO</div><div><time>May 2025</time><h3>CCNA / Python Certification</h3><p>Cisco</p></div><span class="go">View ↗</span>
+      </a>
+      <a class="cert rv" href="https://drive.google.com/file/d/12Dv3mIIqi3RQFFh2FEq3JgQHNQ-UHbrZ/view" target="_blank" rel="noopener">
+        <div class="hex">WEB</div><div><time>Jan 2025</time><h3>Web Development Competition</h3><p>See Caller · inter-college competition</p></div><span class="go">View ↗</span>
+      </a>
+      <a class="cert rv" href="https://drive.google.com/file/d/122bhjR_y1Xx8tllvPd7Rm457Bw8lD9z-/view" target="_blank" rel="noopener">
+        <div class="hex">HACK</div><div><time>Nov 2024</time><h3>Coding Competition</h3><p>HackSprint, GDG GL Bajaj</p></div><span class="go">View ↗</span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ===== 07 · CONSOLE ===== -->
+<section class="screen" id="console" aria-label="Console">
+  <div class="wrap">
+    <div class="shead"><span class="tag">07 / Console</span><h2>Amir.AI Shell</h2><p>A little shell that knows this portfolio. Type a command or press a button. Tab autocompletes, ↑ / ↓ walk the history. Try <code>matrix</code>.</p></div>
+    <div class="conrow">
+      <div class="panel term rv" id="term">
+        <div class="term__bar"><div class="dots"><i></i><i></i><i></i></div><span>amir-ai-shell v2.0.0 (arcade)</span><span class="on">ONLINE</span></div>
+        <div class="term__body" id="tbody">
+          <canvas id="rain" hidden></canvas>
+          <div class="tl sys">[SYSTEM] Initialize Amir AI Engine... SUCCESS</div>
+          <div class="tl sys">[SYSTEM] Load player profile: 'Amir Choudhary'... SUCCESS</div>
+          <div class="tl sys">[SYSTEM] Insert coin... FREE PLAY</div>
+          <div class="tl ai">Welcome, visitor. Type <span class="pr">help</span> to list commands.</div>
+          <div class="qbs" id="qbs">
+            <button class="qb" data-cmd="about">About</button>
+            <button class="qb" data-cmd="skills">Tech Stack</button>
+            <button class="qb" data-cmd="projects">Projects</button>
+            <button class="qb" data-cmd="experience">Experience</button>
+            <button class="qb" data-cmd="hackathons">Hackathons</button>
+            <button class="qb" data-cmd="resume">Resume</button>
+            <button class="qb" data-cmd="contact">Contact</button>
+            <button class="qb" data-cmd="matrix">Matrix Rain</button>
+            <button class="qb" data-cmd="clear">Clear</button>
+          </div>
+          <div id="thist" role="log" aria-live="polite"></div>
+        </div>
+        <div class="term__in">
+          <label for="tin">visitor@amir-ai:~$</label>
+          <input type="text" id="tin" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="help · projects · goto coop · matrix">
+        </div>
+      </div>
+
+      <div class="ghrow">
+        <div class="gh rv"><h3>General stats</h3>
+          <img src="https://github-profile-summary-cards.vercel.app/api/cards/stats?username=Amirchoudhary09&theme=github_dark&hide_logo=true&bg_color=05060a00&title_color=19e3ff&text_color=a8b0c2&icon_color=ff3d8a&border_color=00000000" alt="Amir's GitHub stats card" width="400" height="200" loading="lazy" onerror="this.parentElement.classList.add('off')">
+          <p class="off">Live card loads on the deployed site. <a href="https://github.com/Amirchoudhary09" target="_blank" rel="noopener">Open GitHub ↗</a></p>
+        </div>
+        <div class="gh rv"><h3>Streak</h3>
+          <img src="https://streak-stats.demolab.com/?user=Amirchoudhary09&theme=dracula&hide_border=true&background=05060a00&ring=ff3d8a&fire=19e3ff&currStreakNum=eef1f8" alt="Amir's GitHub contribution streak" width="495" height="195" loading="lazy" onerror="this.parentElement.classList.add('off')">
+          <p class="off">Live card loads on the deployed site. <a href="https://github.com/Amirchoudhary09" target="_blank" rel="noopener">Open GitHub ↗</a></p>
+        </div>
+        <div class="gh rv"><h3>Contributions</h3>
+          <img src="https://ghchart.rshah.org/19e3ff/Amirchoudhary09" alt="Amir's GitHub contributions calendar for the last year" width="663" height="104" loading="lazy" onerror="this.parentElement.classList.add('off')">
+          <p class="off">Live card loads on the deployed site. <a href="https://github.com/Amirchoudhary09" target="_blank" rel="noopener">Open GitHub ↗</a></p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== 08 · CO-OP ===== -->
+<section class="screen" id="coop" aria-label="Co-op">
+  <div class="wrap">
+    <div class="shead"><span class="tag">08 / Co-op</span><h2>Join the Party</h2><p>Have a project idea, an SDE opportunity, or want to talk low-level graphics and DirectX / WebGL pipelines? The inbox is open.</p></div>
+    <div class="coop">
+      <div class="panel cinfo rv">
+        <h3>Connect with me</h3>
+        <p>Based in Greater Noida, India. Open to SDE roles in graphics, engine and full-stack work.</p>
+        <button type="button" class="cb" data-copy="amirchoudharyb03@gmail.com">
+          <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="14" rx="2.5"/><path d="m3.8 6.6 8.2 6 8.2-6"/></svg></span>
+          <span><span>Email</span><strong>amirchoudharyb03@gmail.com</strong></span>
+          <span class="cp">COPY</span>
+        </button>
+        <a class="cb" href="Amir-Choudhary-Resume.pdf" target="_blank" rel="noopener">
+          <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 3h8l4 4v14H6z"/><path d="M14 3v4h4"/><path d="M9 13h6M9 17h6"/></svg></span>
+          <span><span>Résumé</span><strong>View / download PDF</strong></span>
+          <span class="cp">OPEN</span>
+        </a>
+        <button type="button" class="cb" id="reveal-phone">
+          <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2"/></svg></span>
+          <span><span>Call me</span><strong>Click to reveal number</strong></span>
+          <span class="cp">SHOW</span>
+        </button>
+        <div class="cb" style="cursor:default">
+          <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21s-7-6.2-7-11a7 7 0 0 1 14 0c0 4.8-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/></svg></span>
+          <span><span>Spawn point</span><strong>Greater Noida, India</strong></span>
+          <span></span>
+        </div>
+        <div class="socs">
+          <a href="https://linkedin.com/in/amirchoudhary09" target="_blank" rel="noopener">LinkedIn</a>
+          <a href="https://github.com/Amirchoudhary09" target="_blank" rel="noopener">GitHub</a>
+          <a href="https://leetcode.com/u/AMIR09/" target="_blank" rel="noopener">LeetCode</a>
+          <a href="https://www.geeksforgeeks.org/profile/amirchoudharyb09" target="_blank" rel="noopener">GfG</a>
+        </div>
+      </div>
+
+      <form class="panel rv" id="cform" novalidate>
+        <div class="frow">
+          <label>Player name<input type="text" id="f-name" name="name" placeholder="Enter name" autocomplete="name" required></label>
+          <label>Your email<input type="email" id="f-email" name="email" placeholder="Enter email" autocomplete="email" required></label>
+        </div>
+        <label>Subject<input type="text" id="f-subject" name="subject" placeholder="Collaboration proposal" required></label>
+        <label>Message<textarea id="f-msg" name="message" rows="5" placeholder="Let's build something..." required></textarea></label>
+        <label class="hp" aria-hidden="true">Leave this empty<input type="text" id="f-honey" name="_honey" tabindex="-1" autocomplete="off"></label>
+        <button type="submit" class="send">▶ Send message</button>
+        <p class="fstat" id="fstat" role="status" aria-live="polite"></p>
       </form>
     </div>
-  </div>
-</div>
 
-<footer class="foot rv">
-  <div class="foot__cols">
-    <div class="foot__brand">
-      <b>&lt;Amir.Choudhary/&gt;</b>
-      <p>SDE at Wasp3D — real-time graphics in C++ / DirectX 12, and full-stack MERN products with AI baked in.</p>
-      <span class="foot__where"><i></i>Greater Noida, India · open to SDE roles</span>
-    </div>
-    <nav class="foot__col" aria-label="Site sections">
-      <h5>Explore</h5>
-      <a href="#about">About</a>
-      <a href="#work">Experience</a>
-      <a href="#projects">Projects</a>
-      <a href="#skills">Skills</a>
-      <a href="#awards">Achievements</a>
-      <a href="#activity">Amir.AI shell</a>
-    </nav>
-    <nav class="foot__col" aria-label="Profiles and contact">
-      <h5>Connect</h5>
-      <a href="mailto:amirchoudharyb03@gmail.com">Email</a>
-      <a href="https://github.com/Amirchoudhary09" target="_blank" rel="noopener">GitHub</a>
-      <a href="https://linkedin.com/in/amirchoudhary09" target="_blank" rel="noopener">LinkedIn</a>
-      <a href="https://leetcode.com/u/AMIR09/" target="_blank" rel="noopener">LeetCode</a>
-      <a href="https://www.geeksforgeeks.org/profile/amirchoudharyb09" target="_blank" rel="noopener">GeeksforGeeks</a>
-      <a href="Amir-Choudhary-Resume.pdf" target="_blank" rel="noopener">Résumé (PDF)</a>
-    </nav>
+    <footer class="foot">
+      <span><b>&lt;Amir.exe/&gt;</b> · © 2026 Amir Choudhary</span>
+      <span>Hand-built with vanilla JS and canvas. No frameworks. Konami code unlocks god mode.</span>
+      <a href="#start">▲ Back to title</a>
+    </footer>
   </div>
-  <div class="foot__bar">
-    <span>© 2026 Amir Choudhary</span>
-    <span class="foot__built">Hand-built with vanilla JS, three.js and a little WebGL — no frameworks</span>
-    <a class="foot__top" href="#top">Back to top ↑</a>
-  </div>
-</footer>
-
-
-</div>
-</div>
 </section>
 
 </main>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
 
-<p class="boot-note">Opened straight from disk — for the full experience run <code>start.bat</code> (or <code>npx serve .</code>) and open the printed URL.</p>
+<script>
+(function(){
+'use strict';
+const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>[...r.querySelectorAll(s)];
+const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
+document.documentElement.classList.add('js');
 
-<script type="importmap">
-{
-  "imports": {
-    "three": "https://cdn.jsdelivr.net/npm/three@0.167.0/build/three.module.min.js"
+/* ---------- synthwave grid + stars background ---------- */
+(function bg(){
+  const c=$('#bg'),ctx=c.getContext('2d');let w,h,t=0,stars=[];
+  function size(){w=c.width=innerWidth*devicePixelRatio;h=c.height=innerHeight*devicePixelRatio;
+    stars=Array.from({length:140},()=>({x:Math.random()*w,y:Math.random()*h*.7,r:Math.random()*1.4+.3,p:Math.random()*6}));}
+  size();addEventListener('resize',size);
+  function draw(){
+    ctx.clearRect(0,0,w,h);
+    const g=ctx.createLinearGradient(0,0,0,h);g.addColorStop(0,'#070912');g.addColorStop(.6,'#0b0e1c');g.addColorStop(1,'#130a26');
+    ctx.fillStyle=g;ctx.fillRect(0,0,w,h);
+    // stars
+    for(const s of stars){const a=.35+.35*Math.sin(t*.002+s.p);ctx.fillStyle=`rgba(200,230,255,${a})`;ctx.fillRect(s.x,s.y,s.r*devicePixelRatio,s.r*devicePixelRatio);}
+    // sun
+    const cx=w*.5,cy=h*.62;const sg=ctx.createRadialGradient(cx,cy,0,cx,cy,w*.18);sg.addColorStop(0,'rgba(255,61,138,.22)');sg.addColorStop(.5,'rgba(143,123,255,.10)');sg.addColorStop(1,'rgba(0,0,0,0)');
+    ctx.fillStyle=sg;ctx.fillRect(0,0,w,h);
+    // perspective grid
+    const hor=h*.62;ctx.strokeStyle='rgba(25,227,255,.13)';ctx.lineWidth=1*devicePixelRatio;
+    for(let i=-14;i<=14;i++){ctx.beginPath();ctx.moveTo(cx+i*w*.06,hor);ctx.lineTo(cx+i*w*.5,h);ctx.stroke();}
+    const n=18,off=(t*.00035)%1;
+    for(let i=0;i<n;i++){const k=((i+off)/n);const y=hor+Math.pow(k,2.2)*(h-hor);ctx.globalAlpha=.08+k*.3;ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(w,y);ctx.stroke();}
+    ctx.globalAlpha=1;
   }
+  draw();
+  if(!reduced){(function loop(ts){t=ts;draw();requestAnimationFrame(loop);})(0);}
+})();
+
+/* ---------- XP bar + nav active ---------- */
+const xp=$('#xpbar'),lvl=$('#lvl'),navLinks=$$('#nav a');
+const secs=navLinks.map(a=>$(a.getAttribute('href')));
+function onScroll(){
+  const max=document.documentElement.scrollHeight-innerHeight;const p=max>0?Math.min(1,scrollY/max):0;
+  xp.style.width=(p*100).toFixed(1)+'%';lvl.textContent='XP '+Math.round(p*100)+'%';
+  let cur=-1;secs.forEach((s,i)=>{if(s&&s.getBoundingClientRect().top<innerHeight*.45)cur=i;});
+  navLinks.forEach((a,i)=>a.classList.toggle('on',i===cur));
 }
+addEventListener('scroll',onScroll,{passive:true});onScroll();
+
+/* ---------- typed strap-line ---------- */
+(function typing(){
+  const el=$('#typed');const lines=['Software Development Engineer @ Wasp3D','Real-time graphics · C++ / DirectX 12','Full-stack engineer · MERN','900+ DSA problems solved','Konami code → god mode'];
+  if(reduced)return;let li=0,ci=lines[0].length,del=true;
+  function tick(){const s=lines[li];if(del){ci--;el.textContent=s.slice(0,ci);if(ci===0){del=false;li=(li+1)%lines.length;return setTimeout(tick,350);}return setTimeout(tick,28);}
+    ci++;el.textContent=lines[li].slice(0,ci);if(ci===lines[li].length){del=true;return setTimeout(tick,2200);}setTimeout(tick,55);}
+  setTimeout(tick,1800);
+})();
+
+/* ---------- reveal + counters + pips ---------- */
+$$('.pips').forEach(p=>{const n=+p.dataset.fill;for(let i=0;i<10;i++){const b=document.createElement('i');if(i<n)b.className='f';p.appendChild(b);}});
+function count(b){const to=+b.dataset.to,pre=b.dataset.pre||'',suf=b.dataset.suf||'';if(reduced){b.textContent=pre+to+suf;return;}
+  const t0=performance.now(),d=1400;(function f(now){const k=Math.min(1,(now-t0)/d);const e=1-Math.pow(1-k,3);b.textContent=pre+Math.round(to*e)+suf;if(k<1)requestAnimationFrame(f);})(t0);}
+const rv=$$('.rv');
+if('IntersectionObserver' in window){
+  rv.forEach(el=>{if(el.getBoundingClientRect().top>innerHeight)el.classList.add('pre');});
+  const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.remove('pre');$$('[data-to]',e.target).forEach(b=>{if(!b.dataset.done){b.dataset.done=1;count(b);}});io.unobserve(e.target);}}),{threshold:.12});
+  rv.forEach(el=>io.observe(el));
+}else{$$('[data-to]').forEach(count);}
+
+/* ---------- card tilt ---------- */
+if(!reduced&&matchMedia('(hover:hover)').matches){
+  $$('.tilt').forEach(card=>{
+    card.addEventListener('pointermove',e=>{const r=card.getBoundingClientRect();const x=(e.clientX-r.left)/r.width-.5,y=(e.clientY-r.top)/r.height-.5;
+      card.style.transform=`translateY(-4px) perspective(900px) rotateX(${(-y*6).toFixed(2)}deg) rotateY(${(x*6).toFixed(2)}deg)`;});
+    card.addEventListener('pointerleave',()=>{card.style.transform='';});
+  });
+}
+
+/* ---------- water sketch (LV 03) ---------- */
+(function water(){
+  const c=$('#water');if(!c)return;const ctx=c.getContext('2d');let w,h,t=0,ripples=[];
+  function size(){const r=c.getBoundingClientRect();w=c.width=Math.max(2,r.width*devicePixelRatio);h=c.height=Math.max(2,r.height*devicePixelRatio);}
+  size();addEventListener('resize',size);
+  c.parentElement.addEventListener('pointermove',e=>{const r=c.getBoundingClientRect();ripples.push({x:(e.clientX-r.left)*devicePixelRatio,y:(e.clientY-r.top)*devicePixelRatio,r:0,a:1});if(ripples.length>18)ripples.shift();});
+  function draw(){
+    const sky=ctx.createLinearGradient(0,0,0,h);sky.addColorStop(0,'#1a0b33');sky.addColorStop(.48,'#ff3d8a');sky.addColorStop(.5,'#061a2a');sky.addColorStop(1,'#03101c');
+    ctx.fillStyle=sky;ctx.fillRect(0,0,w,h);
+    // sun above horizon
+    const hor=h*.5;ctx.fillStyle='rgba(255,200,61,.9)';ctx.beginPath();ctx.arc(w*.5,hor-h*.16,h*.14,0,Math.PI*2);ctx.fill();
+    ctx.fillStyle='#1a0b33';for(let i=0;i<5;i++)ctx.fillRect(0,hor-h*.16+i*h*.045-2,w,h*.012);
+    // reflection: sampled columns shifted by wave + ripples
+    const cols=Math.floor(w/(3*devicePixelRatio));
+    for(let i=0;i<cols;i++){
+      const x=i*(w/cols);let off=Math.sin(x*.012/devicePixelRatio+t*.004)*6+Math.sin(x*.03/devicePixelRatio-t*.006)*3;
+      for(const rp of ripples){const d=Math.hypot(rp.x-x,rp.y-hor*1.5);const k=Math.exp(-Math.abs(d-rp.r)/18)*rp.a;off+=k*22;}
+      const alpha=.55;
+      // reflected sun stripe
+      const sx=Math.abs(x-w*.5-off*devicePixelRatio);
+      if(sx<h*.14){ctx.fillStyle=`rgba(255,200,61,${(alpha*(1-sx/(h*.14))).toFixed(3)})`;ctx.fillRect(x,hor,w/cols+1,h*.5);}
+      ctx.fillStyle=`rgba(25,227,255,${(.05+.05*Math.sin(x*.05+t*.01+off)).toFixed(3)})`;ctx.fillRect(x,hor+(off*devicePixelRatio),w/cols+1,h*.5);
+    }
+    // wave lines
+    ctx.strokeStyle='rgba(25,227,255,.35)';ctx.lineWidth=1*devicePixelRatio;
+    for(let j=0;j<9;j++){const y=hor+j*(h*.5/9)+8;ctx.beginPath();for(let x=0;x<=w;x+=6){let yy=y+Math.sin(x*.02/devicePixelRatio+t*.004+j)*(2+j)*devicePixelRatio;
+      for(const rp of ripples){const d=Math.hypot(rp.x-x,rp.y-y);yy+=Math.exp(-Math.abs(d-rp.r)/14)*rp.a*10*devicePixelRatio*Math.sin(d*.1);}
+      x?ctx.lineTo(x,yy):ctx.moveTo(x,yy);}ctx.stroke();}
+    // horizon glow
+    const hg=ctx.createLinearGradient(0,hor-4,0,hor+30);hg.addColorStop(0,'rgba(255,61,138,.8)');hg.addColorStop(1,'rgba(255,61,138,0)');ctx.fillStyle=hg;ctx.fillRect(0,hor-2,w,34);
+    ripples.forEach(r=>{r.r+=2.2*devicePixelRatio;r.a*=.965;});ripples=ripples.filter(r=>r.a>.03);
+  }
+  draw();
+  if(!reduced){let vis=true;new IntersectionObserver(es=>vis=es[0].isIntersecting).observe(c);(function loop(ts){t=ts;if(vis)draw();requestAnimationFrame(loop);})(0);}
+})();
+
+/* ---------- Amir.AI shell ---------- */
+(function shell(){
+  const EMAIL='amirchoudharyb03@gmail.com',RESUME='Amir-Choudhary-Resume.pdf';
+  const L={github:'https://github.com/Amirchoudhary09',linkedin:'https://linkedin.com/in/amirchoudhary09',leetcode:'https://leetcode.com/u/AMIR09/',gfg:'https://www.geeksforgeeks.org/profile/amirchoudharyb09'};
+  const SECTIONS=[['start','Title'],['stats','Stats'],['quests','Quests'],['levels','Levels'],['inventory','Inventory'],['trophies','Trophies'],['badges','Badges'],['console','Console'],['coop','Co-op']];
+  const C={
+    help:()=>['Commands:','  about · skills · projects · experience · education · hackathons · certs','  contact · socials · resume · goto <screen> · ls · matrix · clear','Tab autocompletes, ↑ / ↓ walk the history. Konami code works too.'],
+    about:()=>"I'm Amir Choudhary — Software Development Engineer at Wasp3D, Noida. Days go into real-time rendering in C++ / DirectX 12 (planar reflections, water, HLSL shaders); before that I shipped full-stack MERN products with JWT/OAuth auth and AI integrations. 900+ DSA problems solved, B.Tech CS (AI & ML) finishing 2026.",
+    whoami:()=>'visitor — the interesting one is Amir, try `about`.',
+    skills:()=>['Languages   C++ · JavaScript · TypeScript · Python · SQL · HLSL','Graphics    DirectX 12 / 9 · shaders · render pipelines · GPU profiling','Frontend    React · Next.js · Redux · Tailwind CSS · React Query','Backend     Node · Express · REST · JWT · OAuth 2.0 · Mongoose · WebSockets · Zod','Data / AI   MongoDB Atlas · MySQL · Gemini API · OpenAI API · LangChain · RAG'],
+    projects:()=>[`1. AshGuard — women-safety app, 200+ users · [live](https://enchantress-ashguard.vercel.app/) · [code](${L.github}/ASHGUARD)`,`2. Lost & Found Community Platform — MERN · [live](https://lost-and-find-ytbs.vercel.app/) · [code](${L.github}/lost-and-find)`,'3. Real-time Water & Planar Reflections — C++ / DirectX 12 / HLSL, Wasp3D engine',`4. DirectX 12 Procedural Mesh Renderer — C++ / Win32 / HLSL · [code](${L.github}/Cube_by_dx12)`,`5. Gemini Function-Calling Agents — Node + Gemini 2.5 Flash · [code](${L.github}/gen-ai)`,`6. AI Trip Planner — React + Gemini · [live](https://enchantress-trips-planner.vercel.app/) · [code](${L.github}/Travel-Itinerary-Planner-)`,'Type `goto levels` to see them properly.'],
+    experience:()=>['Wasp3D — Software Development Engineer · Apr 2026 – present · Noida','  · reflection pipeline 2 render targets → 1: ~50% less GPU bandwidth','  · real-time water: ripples, flow maps, distortion, planar reflections','  · HLSL vertex / pixel shader work across lighting, materials, sampling','Bluestocks Fintech — SDE Intern · Mar – May 2025 · remote','  · React + Tailwind services page, Express / MongoDB CRUD APIs, Agile sprints'],
+    education:()=>'B.Tech, Computer Science (AI & ML) — G.L. Bajaj Institute of Technology and Management, Greater Noida · 2022–2026 · CGPA 8.01 / 10',
+    hackathons:()=>['Top 3    Adobe Emerge Hackathon 2025 — IIT Delhi (national)','Top 6    Hack For Impact 2025 — IIIT Delhi','Top 10   HackSprint Hackathon 2024 — GDG, GL Bajaj',`900+ DSA problems on [LeetCode](${L.leetcode}) (max rating 1600) and [GeeksforGeeks](${L.gfg})`],
+    certs:()=>['Jun 2024  Google for Developers — Virtual Internship','May 2025  Cisco — CCNA / Python','Jan 2025  Web Development Competition (inter-college) — See Caller','Nov 2024  Coding Competition — HackSprint, GDG GL Bajaj'],
+    contact:()=>[`Email  ${EMAIL}  (copy button in Co-op)`,'Or use the form: `goto coop`.'],
+    socials:()=>[`GitHub    [${L.github}](${L.github})`,`LinkedIn  [${L.linkedin}](${L.linkedin})`,`LeetCode  [${L.leetcode}](${L.leetcode})`,`GfG       [${L.gfg}](${L.gfg})`],
+    resume:()=>`Here you go → [${RESUME}](${RESUME}) — opens in a new tab.`,
+    goto:(a,sh)=>{const q=a.join(' ').toLowerCase();const s=SECTIONS.find(x=>x[0]===q||x[1].toLowerCase().startsWith(q));if(!q||!s)return{err:`goto: unknown screen "${q}". Try: ${SECTIONS.map(x=>x[0]).join(', ')}`};sh.jump(s[0]);return `→ ${s[1]}`;},
+    ls:()=>SECTIONS.map(s=>s[0]+'/').join('  '),
+    pwd:()=>'/home/visitor/amir-arcade',
+    date:()=>new Date().toString(),
+    echo:a=>a.join(' '),
+    sudo:()=>'visitor is not in the sudoers file. This incident will be reported. 🙂',
+    rm:()=>'rm: permission denied — the portfolio stays.',
+    exit:()=>"There's no exit, only `goto coop`. 😄",
+    hi:()=>'Hey! Type `help` to see what I know.',
+    matrix:(a,sh)=>{sh.matrix();return 'Wake up, Neo… (any key stops the rain)';},
+    clear:(a,sh)=>{sh.clear();},
+  };
+  const ALIAS={'about me':'about',me:'about','tech stack':'skills',stack:'skills',tech:'skills',work:'experience',job:'experience',achievements:'hackathons',awards:'hackathons',trophies:'hackathons',certificates:'certs',certifications:'certs',badges:'certs',cv:'resume',email:'contact',links:'socials',social:'socials',github:'socials',linkedin:'socials',open:'goto',cd:'goto','matrix rain':'matrix',cls:'clear','?':'help',hello:'hi',hey:'hi',levels:'projects',quests:'experience',inventory:'skills'};
+  const input=$('#tin'),hist=$('#thist'),body=$('#tbody'),rain=$('#rain');
+  const typed=[];let cur=0,stopRain=null;
+  const sh={clear:()=>{hist.textContent='';},jump:id=>{const el=document.getElementById(id);if(el)el.scrollIntoView({behavior:reduced?'auto':'smooth'});},matrix:()=>{stopRain?.();stopRain=matrixRain();}};
+  function line(text,type){const d=document.createElement('div');d.className='tl '+type;const re=/\[([^\]]+)\]\((https?:\/\/[^)\s]+|[\w.-]+\.pdf)\)/g;let last=0,m;
+    while((m=re.exec(text))){d.append(text.slice(last,m.index));const a=document.createElement('a');a.textContent=m[1];a.href=m[2];a.target='_blank';a.rel='noopener';d.append(a);last=re.lastIndex;}
+    d.append(text.slice(last));hist.append(d);body.scrollTop=body.scrollHeight;}
+  function reply(out){if(out==null)return;if(out.err)return line(out.err,'err');(Array.isArray(out)?out:[out]).forEach((l,i)=>line((i?'  ':'> Amir.AI: ')+l,'ai'));}
+  function run(raw){const text=raw.trim();if(!text)return;typed.push(text);cur=typed.length;
+    const p=document.createElement('div');p.className='tl usr';const s=document.createElement('span');s.className='pr';s.textContent='visitor@amir-ai:~$';p.append(s,' '+text);hist.append(p);
+    const lower=text.toLowerCase();let [name,...args]=lower.split(/\s+/);
+    if(ALIAS[lower]){name=ALIAS[lower];args=[];}else if(ALIAS[name])name=ALIAS[name];
+    if(name==='echo')args=text.split(/\s+/).slice(1);
+    const cmd=C[name];
+    setTimeout(()=>{if(cmd)return reply(cmd(args,sh));const near=Object.keys(C).find(c=>name.length>2&&c.startsWith(name.slice(0,3)));line(`command not found: ${name}`+(near?` — did you mean \`${near}\`?`:" — type 'help'."),'err');},220);}
+  input.addEventListener('keydown',e=>{
+    if(e.key==='Enter'){run(input.value);input.value='';}
+    else if(e.key==='ArrowUp'){e.preventDefault();if(cur>0)input.value=typed[--cur];}
+    else if(e.key==='ArrowDown'){e.preventDefault();input.value=cur<typed.length-1?typed[++cur]:(cur=typed.length,'');}
+    else if(e.key==='Tab'){e.preventDefault();const v=input.value.trim().toLowerCase();if(!v)return;const hits=Object.keys(C).filter(c=>c.startsWith(v));if(hits.length===1)input.value=hits[0]+' ';else if(hits.length>1)line(hits.join('  '),'sys');}
+  });
+  $('#qbs').addEventListener('click',e=>{const b=e.target.closest('.qb');if(!b)return;run(b.dataset.cmd);input.focus();});
+  function matrixRain(){
+    const ctx=rain.getContext('2d');rain.hidden=false;rain.width=body.clientWidth*devicePixelRatio;rain.height=body.clientHeight*devicePixelRatio;
+    const fs=14*devicePixelRatio,cols=Math.floor(rain.width/fs),drops=Array(cols).fill(1),chars='アイウエオカキクケコ01<>/{}#$%&';let id,on=true;
+    function f(){ctx.fillStyle='rgba(7,9,18,.12)';ctx.fillRect(0,0,rain.width,rain.height);ctx.fillStyle='#9cff3d';ctx.font=fs+'px monospace';
+      drops.forEach((y,i)=>{ctx.fillText(chars[Math.floor(Math.random()*chars.length)],i*fs,y*fs);if(y*fs>rain.height&&Math.random()>.975)drops[i]=0;drops[i]++;});if(on)id=requestAnimationFrame(f);}
+    f();
+    const stop=()=>{on=false;cancelAnimationFrame(id);rain.hidden=true;ctx.clearRect(0,0,rain.width,rain.height);removeEventListener('keydown',stop);body.removeEventListener('pointerdown',stop);};
+    setTimeout(()=>{addEventListener('keydown',stop);body.addEventListener('pointerdown',stop);},50);
+    return stop;
+  }
+})();
+
+/* ---------- copy + toast ---------- */
+const toast=$('#toast');let tt;
+function say(msg){toast.textContent=msg;toast.classList.add('show');clearTimeout(tt);tt=setTimeout(()=>toast.classList.remove('show'),2400);}
+function copy(text){return navigator.clipboard?.writeText(text).then(()=>true,()=>false)??Promise.resolve(false);}
+$$('[data-copy]').forEach(b=>b.addEventListener('click',async()=>{const ok=await copy(b.dataset.copy);say(ok?'EMAIL COPIED ✓':'SELECT AND COPY: '+b.dataset.copy);}));
+
+/* ---------- phone: only put on the page when someone asks (keeps it off scrapers) ---------- */
+(function phone(){
+  const btn=$('#reveal-phone');if(!btn)return;
+  const PHONE={text:'+91 94571 14241',href:'tel:+919457114241'};
+  btn.addEventListener('click',()=>{const a=document.createElement('a');a.className='cb';a.href=PHONE.href;a.innerHTML=btn.innerHTML;a.querySelector('strong').textContent=PHONE.text;a.querySelector('.cp').textContent='CALL';btn.replaceWith(a);a.focus();},{once:true});
+})();
+
+/* ---------- contact form: encrypted drop box → private GitHub inbox → email ----------
+   The message is encrypted in the browser (AES-256-GCM, key wrapped with RSA-OAEP) and
+   dropped on an ntfy.sh topic that only ever holds ciphertext. A GitHub Actions job in the
+   private contact-inbox repo decrypts it and files it as an issue, which GitHub emails on.
+   If the drop fails, the visitor's own mail app opens with the message instead. */
+(function contact(){
+  const TO='amirchoudharyb03@gmail.com';
+  const DROP='https://ntfy.sh';
+  const TOPIC='amir-portfolio-inbox-c9f395c61d19';
+  // public half of contact-inbox/key.pem (SPKI, base64) — regenerate both together
+  const PUBLIC_KEY=
+    'MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA3xDboXMBC0hAsma3MB0F1j0pQCYdY+G20AIkJrUNPksdspakIsOKalDKSEiaG56KAC0+BQq+YIf5fdu/OPNe'+
+    'ai71oaCC70kgi9XoZgTlVwQR4qmVwiJ/ekS78cGAi5a4qP1kZ2priUs5/onA+a59ns9Z4VeYDYG50wAt+nGmaJclOtgt4OBhSIkE3+7wUU21Nv5GqV8t10PImAKM724j'+
+    'Y/7H8gOOrPEkcDxVn425BIm93sNf6GVMAbVGhILdBzARXN8SfOpFFuwW+gNw5TkTsnFUCgvOTF6tAlHG/5LnUiBDwR32rpSeLDNpIU0emVgeVJPHE8Sx8D+FoRIRVbB6'+
+    'uQIDAQAB';
+  const b64=buf=>btoa(String.fromCharCode(...new Uint8Array(buf)));
+  async function seal(payload){
+    const der=Uint8Array.from(atob(PUBLIC_KEY),c=>c.charCodeAt(0));
+    const rsa=await crypto.subtle.importKey('spki',der,{name:'RSA-OAEP',hash:'SHA-256'},false,['encrypt']);
+    const aes=await crypto.subtle.generateKey({name:'AES-GCM',length:256},true,['encrypt']);
+    const iv=crypto.getRandomValues(new Uint8Array(12));
+    const ct=await crypto.subtle.encrypt({name:'AES-GCM',iv},aes,new TextEncoder().encode(JSON.stringify(payload)));
+    const k=await crypto.subtle.encrypt({name:'RSA-OAEP'},rsa,await crypto.subtle.exportKey('raw',aes));
+    return {v:1,k:b64(k),iv:b64(iv),ct:b64(ct)};
+  }
+  async function drop(payload){
+    const envelope=await seal(payload);
+    // plain text body = no CORS preflight; ntfy reads the JSON publish format from the body
+    const r=await fetch(DROP,{method:'POST',body:JSON.stringify({topic:TOPIC,title:'portfolio-message',message:JSON.stringify(envelope)})});
+    if(!r.ok)throw new Error(`drop box answered ${r.status}`);
+  }
+  const subjectFor=d=>`Portfolio message from ${d.name} — ${d.subject}`;
+  const bodyFor=d=>`${d.message}\n\n— ${d.name}\n${d.email}`;
+  const mailtoFor=d=>`mailto:${TO}?subject=${encodeURIComponent(subjectFor(d))}&body=${encodeURIComponent(bodyFor(d))}`;
+
+  const form=$('#cform');if(!form)return;
+  const status=$('#fstat'),btn=form.querySelector('button[type=submit]'),idle=btn.textContent;
+  const rules={
+    name:v=>v.trim().length>=2||'Please add your name.',
+    email:v=>/^[^@\s]+@[^@\s]+\.[^@\s]{2,}$/.test(v.trim())||'That email address looks off.',
+    subject:v=>v.trim().length>=3||'Give the message a subject.',
+    message:v=>(v.trim().length>=10&&v.trim().length<=1500)||'Between 10 and 1500 characters, please.',
+  };
+  function tell(msg,kind=''){status.textContent=msg;status.className='fstat'+(kind&&' '+kind);}
+  function openMailApp(d,why){
+    location.href=mailtoFor(d);
+    tell(`${why} Your email app has opened with the message — just press Send there. `,'err');
+    const c=document.createElement('button');c.type='button';c.className='form__copy';c.textContent='No mail app? Copy the message';
+    c.addEventListener('click',()=>{copy(`To: ${TO}\nSubject: ${subjectFor(d)}\n\n${bodyFor(d)}`).then(ok=>{c.textContent=ok?`Copied — paste it into an email to ${TO}`:`Email ${TO} with your message`;});});
+    status.append(c);
+  }
+  form.addEventListener('input',e=>{e.target.classList.remove('bad');if(status.classList.contains('err'))tell('');});
+  let busy=false;
+  form.addEventListener('submit',async e=>{
+    e.preventDefault();if(busy)return;
+    const data={};
+    for(const key in rules){const field=form.elements[key];const check=rules[key](field.value);
+      if(check!==true){field.classList.add('bad');field.focus();tell(check,'err');return;}data[key]=field.value.trim();}
+    if(form.elements._honey&&form.elements._honey.value){form.reset();tell("Message sent — I'll get back to you soon.",'ok');return;}
+    busy=true;btn.disabled=true;btn.textContent='Sending…';tell('');
+    try{await drop({...data,when:Date.now(),page:location.href});form.reset();btn.textContent='Sent ✓';tell("Message sent — I'll get back to you soon. +100 XP",'ok');say('MESSAGE SENT ✓ +100 XP');}
+    catch{openMailApp(data,"Couldn't reach the inbox.");}
+    finally{busy=false;setTimeout(()=>{btn.disabled=false;btn.textContent=idle;},3000);}
+  });
+})();
+
+/* ---------- Konami ---------- */
+const KONAMI=['ArrowUp','ArrowUp','ArrowDown','ArrowDown','ArrowLeft','ArrowRight','ArrowLeft','ArrowRight','b','a'];let ki=0;
+addEventListener('keydown',e=>{if(e.target.tagName==='INPUT'||e.target.tagName==='TEXTAREA')return;ki=e.key===KONAMI[ki]?ki+1:(e.key===KONAMI[0]?1:0);
+  if(ki===KONAMI.length){ki=0;document.body.classList.toggle('god');say(document.body.classList.contains('god')?'GOD MODE ON · +∞ HP':'GOD MODE OFF');}});
+})();
 </script>
-<script type="module" src="js/main.js"></script>
 </body>
 </html>
