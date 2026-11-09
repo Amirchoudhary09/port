@@ -97,15 +97,14 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
 /* ---------- HUD ---------- */
 .hud{position:sticky;top:env(safe-area-inset-top,0px);z-index:50;background:rgba(7,9,18,.86);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
 .hud__in{display:flex;align-items:center;gap:16px;padding-block:10px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));max-width:1240px;margin:0 auto}
-.brand{font-family:var(--pixel);font-size:11px;color:var(--cyan);letter-spacing:.5px;white-space:nowrap;text-shadow:0 0 12px var(--cyan-dim)}
-.brand:hover{text-decoration:none}
-.brand b{color:var(--mag)}
+.brand{display:inline-flex;flex:none;line-height:0}
+.logo{display:block;width:34px;height:34px;filter:drop-shadow(0 0 6px var(--cyan-dim));transition:transform .2s var(--ease),filter .2s}
+.brand:hover .logo,.brand:focus-visible .logo{transform:translateY(-1px);filter:drop-shadow(0 0 10px var(--cyan))}
 .hud nav{display:flex;gap:4px;margin-left:auto;overflow-x:auto;scrollbar-width:none;min-width:0}
 .hud nav::-webkit-scrollbar{display:none}
 .hud nav a{font-family:var(--mono);font-size:13px;letter-spacing:.5px;color:var(--mut);padding:6px 10px;border:1px solid transparent;white-space:nowrap;text-transform:uppercase}
 .hud nav a:hover{color:var(--tx);text-decoration:none}
 .hud nav a.on{color:var(--lime);border-color:var(--line2);background:var(--panel)}
-.hud nav a span{color:var(--dim);margin-right:4px}
 .xp{position:absolute;left:0;right:0;bottom:-1px;height:3px;background:var(--line)}
 .xp i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--cyan),var(--lime));box-shadow:0 0 10px var(--lime)}
 .lvl{font-family:var(--mono);font-size:12px;color:var(--gold);white-space:nowrap;border:1px solid var(--line2);padding:4px 8px;background:var(--panel)}
@@ -385,16 +384,16 @@ form .bad{border-color:var(--mag);box-shadow:0 0 0 3px var(--mag-dim)}
 
 <header class="hud">
   <div class="hud__in">
-    <a class="brand" href="#start">&lt;Amir<b>.</b>exe/&gt;</a>
+    <a class="brand" href="#start" aria-label="Amir Choudhary — back to the title screen"><svg class="logo" viewBox="0 0 16 16" width="34" height="34" shape-rendering="crispEdges" aria-hidden="true"><rect width="16" height="16" rx="3" fill="#070912"/><rect x=".5" y=".5" width="15" height="15" rx="2.5" fill="none" stroke="#2f3a6a"/><path transform="translate(1 1)" fill="#ff3d8a" d="M6 4h3v1H6zM5 5h1v1H5zM9 5h1v1H9zM4 6h1v2H4zM10 6h1v2h-1zM4 8h7v1H4zM4 9h1v3H4zM10 9h1v3h-1z"/><path fill="#19e3ff" d="M6 4h3v1H6zM5 5h1v1H5zM9 5h1v1H9zM4 6h1v2H4zM10 6h1v2h-1zM4 8h7v1H4zM4 9h1v3H4zM10 9h1v3h-1z"/></svg></a>
     <nav id="nav" aria-label="Screens">
-      <a href="#stats"><span>01</span>Stats</a>
-      <a href="#quests"><span>02</span>Quests</a>
-      <a href="#levels"><span>03</span>Levels</a>
-      <a href="#inventory"><span>04</span>Inventory</a>
-      <a href="#trophies"><span>05</span>Trophies</a>
-      <a href="#badges"><span>06</span>Badges</a>
-      <a href="#console"><span>07</span>Console</a>
-      <a href="#coop"><span>08</span>Co-op</a>
+      <a href="#stats">Stats</a>
+      <a href="#quests">Quests</a>
+      <a href="#levels">Levels</a>
+      <a href="#inventory">Inventory</a>
+      <a href="#trophies">Trophies</a>
+      <a href="#badges">Badges</a>
+      <a href="#console">Console</a>
+      <a href="#coop">Co-op</a>
     </nav>
     <div class="lvl" id="lvl">XP 0%</div>
   </div>
